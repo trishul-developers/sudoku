@@ -1,8 +1,8 @@
 // Versioned same-origin cache; Android uses local packaged assets instead.
-const CACHE_NAME = 'pure-sudoku-v0.2.1';
+const CACHE_NAME = 'pure-sudoku-v0.2.2';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest',
-  './icons/icon-192.png', './icons/icon-512.png'
+  './icons/icon.svg'
 ];
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME)

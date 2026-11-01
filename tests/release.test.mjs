@@ -22,8 +22,8 @@ test('Web assets and Android assets are byte-for-byte identical',()=>{
 test('Offline PWA is installable with local icon assets and service worker',()=>{
  assert.match(pkg.version, /^\d+\.\d+\.\d+$/);
  assert.equal(manifest.display,'standalone');
- assert.ok(manifest.icons.some(x=>x.sizes==='192x192'));
- assert.ok(manifest.icons.some(x=>x.sizes==='512x512'));
+ assert.ok(manifest.icons.some(x=>x.sizes==='any' && x.type==='image/svg+xml'));
+ assert.ok(manifest.icons.some(x=>x.src==='./icons/icon.svg'));
  const page=read('www/index.html');
  assert.match(page,/rel="manifest"/);
  assert.match(page,/serviceWorker\.register\('\.\/sw\.js'\)/);

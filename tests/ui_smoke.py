@@ -35,9 +35,12 @@ with sync_playwright() as playwright:
           lastControlBottom: document.getElementById('btn-auto-notes').getBoundingClientRect().bottom
         })''')
         assert layout['board'] >= 230, (width, height, layout)
-        assert layout['key'] >= 48, (width, height, layout)
+        assert layout['key'] >= 32, (width, height, layout)
         assert layout['horizontalScroll'] <= 1, (width, height, layout)
-        assert layout['bodyScroll'] <= (24 if height <= 640 else 4), (width, height, layout)
+        pad = page.locator('.num-btn').evaluate_all('els => els.map(e => ({y:Math.round(e.getBoundingClientRect().top), w:Math.round(e.getBoundingClientRect().width)}))')
+        assert len(pad) == 9 and len({k['y'] for k in pad}) == 1, (width, height, pad)
+        assert max(k['w'] for k in pad)-min(k['w'] for k in pad) <= 1, (width, height, pad)
+        assert layout['bodyScroll'] <= 4, (width, height, layout)
         assert not errors, errors
         print(f'PASS {width}x{height}: board={layout["board"]:.0f} keypad={layout["key"]:.0f} scroll={layout["bodyScroll"]:.0f}')
         ctx.close()

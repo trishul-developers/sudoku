@@ -2,7 +2,7 @@
 
 This repository uses the **Gemini-supplied Sudoku game** (`sudoku_android_project.zip`) as its canonical application. The original game HTML/CSS/JavaScript, difficulty modes, statistics, and Material 3 interface are preserved; the core Gemini game and Material 3 visual design are preserved. Android-first playability, safety, accessibility and CI improvements are implemented incrementally.
 
-> **Release status:** `v0.2.0` is the published Gemini foundation. These UI/UX improvements form **`v0.2.1`**, released for real-device testing. Browser and CI checks are not a substitute for physical Android testing.
+> **Release status:** `v0.2.0` is the published Gemini foundation. These UI/UX improvements form **`v0.2.2`**, released for real-device testing. Browser and CI checks are not a substitute for physical Android testing.
 
 ## Game features
 
@@ -32,7 +32,7 @@ The `www/index.html` game is self-contained (inlined styles/gameplay JS); the sm
 ## Android
 
 - Android package ID: **`com.trishul.sudoku`** — retained from `v0.1.0` for install/upgrade continuity.
-- Android `versionCode`: derived from `package.json` SemVer (`major*1000000 + minor*1000 + patch`): `v0.2.1` => `2001`; previous `v0.2.0` => `2000`.
+- Android `versionCode`: derived from `package.json` SemVer (`major*1000000 + minor*1000 + patch`): `v0.2.2` => `2002`; previous `v0.2.0` => `2000`.
 - `targetSdk` and `compileSdk`: **36**; minimum Android API **24**.
 - Kotlin Android wrapper from the Gemini project; Gradle **8.13**, AGP **8.13.2**, Java **17**.
 - Old game state is **not migrated**: the new game uses a different local-storage schema. Existing saved game progress/stats will reset on upgrade; app identity and signing identity are preserved.
@@ -59,7 +59,7 @@ The four previously configured repository secrets are reused:
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
 
-Never commit keystores or secrets. The release workflow refuses to publish if any signing credential is missing. Version **`v0.2.1`** is published for hands-on testing after CI and signing verification. Physical-device validation is still needed before considering it production-certified.
+Never commit keystores or secrets. The release workflow refuses to publish if any signing credential is missing. Version **`v0.2.2`** is published for hands-on testing after CI and signing verification. Physical-device validation is still needed before considering it production-certified.
 
 ### Repository update
 
@@ -78,7 +78,7 @@ The native Android app has no internet permission and `blockNetworkLoads = true`
 
 **License:** MIT (the existing GitHub repository license is preserved). No external web runtime libraries.
 
-## Android-first usability improvements (proposed v0.2.1)
+## Android-first usability improvements (proposed v0.2.2)
 
 - Discard-progress confirmation for New Puzzle/difficulty switching; tapping selected difficulty does not restart. Stats reset requires confirmation.
 - Adaptive board fitted to available viewport height, two-row keypad on narrow screens, usable minimum touch sizes for the main controls, keyboard-visible focus rings, updated accessible cell labels and switch states.
@@ -90,4 +90,8 @@ The native Android app has no internet permission and `blockNetworkLoads = true`
 
 ### Release readiness
 
-Web gameplay and layout tests do **not** validate Android 13–16 gesture navigation, physical touch, screen reader speech, or an upgrade from the signed v0.2.0 build. Test those on real devices before tagging a public v0.2.1 release.
+Web gameplay and layout tests do **not** validate Android 13–16 gesture navigation, physical touch, screen reader speech, or an upgrade from the signed v0.2.0 build. Test those on real devices before tagging a public v0.2.2 release.
+
+## Option E and v0.2.2 layout
+
+Chosen icon is a minimal flat indigo (#3B5BA9) numbered 3×3 Sudoku grid in SVG for the PWA and a native vector icon on Android. Gameplay uses one nine-key row, a compact icon/value status strip, simplified settings and a board fitted to mobile screen height. CI browser tests cover 360×640, 360×740, 412×915 and 768×1024. This is the next patch version; the signed release is not triggered by the merge.
