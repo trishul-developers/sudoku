@@ -20,14 +20,14 @@ test('Web assets and Android assets are byte-for-byte identical',()=>{
 });
 
 test('Offline PWA is installable with local icon assets and service worker',()=>{
- assert.equal(pkg.version,'0.2.0');
+ assert.equal(pkg.version,'0.3.0');
  assert.equal(manifest.display,'standalone');
  assert.ok(manifest.icons.some(x=>x.sizes==='192x192'));
  assert.ok(manifest.icons.some(x=>x.sizes==='512x512'));
  const page=read('www/index.html');
  assert.match(page,/rel="manifest"/);
  assert.match(page,/serviceWorker\.register\('\.\/sw\.js'\)/);
- assert.match(read('www/sw.js'),/pure-sudoku-v0\.2\.0/);
+ assert.match(read('www/sw.js'),/pure-sudoku-v0\.3\.0/);
 });
 
 test('Android retains app identity and enforces no network permission',()=>{
@@ -49,4 +49,20 @@ test('Publish workflow requires signing secrets and tags',()=>{
  for(const name of ['ANDROID_KEYSTORE_BASE64','ANDROID_KEYSTORE_PASSWORD','ANDROID_KEY_ALIAS','ANDROID_KEY_PASSWORD'])assert.ok(yaml.includes(name));
  assert.match(yaml,/gh release create/);
  assert.match(yaml,/assembleRelease :app:bundleRelease/);
+});
+
+
+test('Android edge-to-edge, Back dispatch, and lifecycle safety are wired',()=>{
+ const activity=read('android/app/src/main/java/com/puresudoku/material/MainActivity.kt');
+ for(const feature of ['WindowInsets.Type.systemBars()', 'WindowInsets.Type.displayCutout()',
+   'setOnApplyWindowInsetsListener', 'OnBackInvokedDispatcher', 'pureSudokuHandleBack',
+   'pureSudokuOnBackground', 'pauseTimers()', 'resumeTimers()']) {
+   assert.ok(activity.includes(feature), feature);
+ }
+ const html=read('www/index.html');
+ for(const feature of ['id="modal-confirm"', 'requestNewGame(', 'aria-checked',
+   'fitBoardToViewport()', 'window.pureSudokuOnBackground', 'window.pureSudokuHandleBack',
+   'Check Mistakes Immediately', 'id="toggle-haptics"']) {
+   assert.ok(html.includes(feature), feature);
+ }
 });

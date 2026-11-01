@@ -1,8 +1,8 @@
 # Pure Sudoku — Material 3, offline and ad-free
 
-This repository uses the **Gemini-supplied Sudoku game** (`sudoku_android_project.zip`) as its canonical application. The original game HTML/CSS/JavaScript, difficulty modes, statistics, and Material 3 interface are preserved; only Android/PWA packaging, versioning, security settings and release automation have been adapted.
+This repository uses the **Gemini-supplied Sudoku game** (`sudoku_android_project.zip`) as its canonical application. The original game HTML/CSS/JavaScript, difficulty modes, statistics, and Material 3 interface are preserved; the core Gemini game and Material 3 visual design are preserved. Android-first playability, safety, accessibility and CI improvements are implemented incrementally.
 
-> **Release status:** `v0.1.0` is the previous game and remains available as a historic release. This source is the replacement planned for **`v0.2.0`**. Do not publish a new release until the Android build and device testing have passed.
+> **Release status:** `v0.2.0` is the published Gemini foundation. These UI/UX improvements are prepared for **`v0.3.0`** and are not released until CI and physical Android device testing have passed.
 
 ## Game features
 
@@ -32,7 +32,7 @@ The `www/index.html` game is self-contained (inlined styles/gameplay JS); the sm
 ## Android
 
 - Android package ID: **`com.trishul.sudoku`** — retained from `v0.1.0` for install/upgrade continuity.
-- Android `versionCode`: derived from `package.json` SemVer (`major*1000000 + minor*1000 + patch`): `v0.2.0` => `2000`; previous `v0.1.0` => `1000`.
+- Android `versionCode`: derived from `package.json` SemVer (`major*1000000 + minor*1000 + patch`): `v0.3.0` => `3000`; previous `v0.2.0` => `2000`.
 - `targetSdk` and `compileSdk`: **36**; minimum Android API **24**.
 - Kotlin Android wrapper from the Gemini project; Gradle **8.13**, AGP **8.13.2**, Java **17**.
 - Old game state is **not migrated**: the new game uses a different local-storage schema. Existing saved game progress/stats will reset on upgrade; app identity and signing identity are preserved.
@@ -59,7 +59,7 @@ The four previously configured repository secrets are reused:
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
 
-Never commit keystores or secrets. The release workflow refuses to publish if any signing credential is missing. Tag **`v0.2.0` only after the replacement passes CI and device testing**.
+Never commit keystores or secrets. The release workflow refuses to publish if any signing credential is missing. Tag **`v0.3.0` only after mobile CI and physical-device checks pass**.
 
 ### Repository update
 
@@ -77,3 +77,17 @@ The project ZIP is the actual new source. `git rm` is used on the temporary chec
 The native Android app has no internet permission and `blockNetworkLoads = true`. The web version necessarily needs an initial HTTPS visit to install its offline cache. Stats and saves are local to the device. Device testing, Android APK compilation and Play Store acceptance must still be validated in GitHub CI/Android Studio; offline gameplay was smoke-tested in Chromium.
 
 **License:** MIT (the existing GitHub repository license is preserved). No external web runtime libraries.
+
+## Android-first usability improvements (proposed v0.3.0)
+
+- Discard-progress confirmation for New Puzzle/difficulty switching; tapping selected difficulty does not restart. Stats reset requires confirmation.
+- Adaptive board fitted to available viewport height, two-row keypad on narrow screens, usable minimum touch sizes for the main controls, keyboard-visible focus rings, updated accessible cell labels and switch states.
+- Accurate distinction between wrong answers and Sudoku row/column/box conflicts, plus an optional manual checking mode and separate vibration toggle.
+- Native Android Back dismisses a modal before pausing; Back again on the pause screen exits. Status/navigation bar and display-cutout insets are applied to the WebView host on Android 11+, including enforced edge-to-edge screens.
+- Resume explicitly after backgrounding/reload so a phone call cannot secretly advance time; the paused timer interval stops. Hint reveals are labelled as reveals.
+- Browser UI smoke tests cover 360×640, 360×740, 412×915 and 768×1024 viewports, confirm/cancel behavior, Notes, input modes, settings, modal Back and pause. They run in GitHub Actions using Playwright as a **CI-only** dependency; the shipped app adds no third-party runtime code.
+- Undo/Redo deliberately do not refund mistakes or hints used; those counters are costs, not part of move history.
+
+### Release readiness
+
+Web gameplay and layout tests do **not** validate Android 13–16 gesture navigation, physical touch, screen reader speech, or an upgrade from the signed v0.2.0 build. Test those on real devices before tagging a public v0.3.0 release.
