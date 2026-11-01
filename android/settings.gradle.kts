@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = 'Sudoku'
-include ':app'
+rootProject.name = "PureSudokuMaterial"
+include(":app")
