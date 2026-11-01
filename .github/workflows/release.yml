@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - 'v*.*.*'
+    branches:
+      - main
+    paths:
+      - '.github/release-request.json'
 
 permissions:
   contents: write
@@ -32,10 +36,35 @@ jobs:
         with:
           gradle-version: '8.13'
 
-      - name: Verify release tag and run tests
+      - name: Resolve release tag
         shell: bash
         env:
-          TAG: ${{ github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          case "$GITHUB_REF" in
+            refs/tags/*)
+              TAG="$GITHUB_REF_NAME"
+              ;;
+            refs/heads/main)
+              TAG=$(node -p 'require("./.github/release-request.json").tag')
+              EXPECTED="v$(node -p 'require("./package.json").version')"
+              [[ "$TAG" == "$EXPECTED" ]] || { echo "Release request $TAG differs from package version $EXPECTED" >&2; exit 1; }
+              if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" >/dev/null 2>&1; then
+                echo "Release tag already exists: $TAG" >&2
+                exit 1
+              fi
+              ;;
+            *)
+              echo "Unsupported release ref: $GITHUB_REF" >&2
+              exit 1
+              ;;
+          esac
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Verify release tag and run tests
+        shell: bash
         run: |
           set -euo pipefail
           [[ "$TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
@@ -99,8 +128,6 @@ jobs:
           unzip -Z1 "$AAB" | grep -Fx 'base/assets/index.html'
 
       - name: Build release packages and checksums
-        env:
-          TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
           npm run package:pwa
@@ -112,10 +139,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          TAG: ${{ github.ref_name }}
         run: |
-          gh release create "$TAG" dist/*.apk dist/*.aab dist/*.zip dist/SHA256SUMS.txt \
-            --verify-tag --generate-notes --title "Pure Sudoku $TAG"
+          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            gh release create "$TAG" dist/*.apk dist/*.aab dist/*.zip dist/SHA256SUMS.txt \
+              --target "$GITHUB_SHA" --generate-notes --title "Pure Sudoku $TAG"
+          else
+            gh release create "$TAG" dist/*.apk dist/*.aab dist/*.zip dist/SHA256SUMS.txt \
+              --verify-tag --generate-notes --title "Pure Sudoku $TAG"
+          fi
 
       - name: Destroy temporary keystore
         if: always()
