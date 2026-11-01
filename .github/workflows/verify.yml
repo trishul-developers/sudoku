@@ -1,0 +1,75 @@
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Web, puzzles and offline assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test game and release invariants
+        run: npm test
+      - name: Assert bundled web assets are in sync
+        run: |
+          npm run sync:android
+          git diff --exit-code -- android/app/src/main/assets/web
+      - name: Build offline PWA ZIP
+        run: bash scripts/package-pwa.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sudoku-pwa-preview
+          path: dist/*.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  android:
+    name: Android debug APK
+    needs: web
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Install Android SDK
+        run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+      - name: Assemble debug APK
+        run: gradle --no-daemon :app:assembleDebug
+        working-directory: android
+      - name: Assert no Android permissions
+        run: |
+          set -euo pipefail
+          "${ANDROID_HOME}/build-tools/35.0.0/aapt" dump permissions android/app/build/outputs/apk/debug/app-debug.apk > permissions.txt
+          cat permissions.txt
+          if grep -q 'uses-permission' permissions.txt; then
+            echo 'Unexpected Android permission detected' >&2
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sudoku-android-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
