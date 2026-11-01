@@ -1,6 +1,6 @@
 {
   "name": "pure-sudoku",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Gemini-authored Pure Sudoku Material 3 PWA and Kotlin Android app",
   "scripts": {

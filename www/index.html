@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="description" content="Minimal, clean Material Design 3 Sudoku. 100% offline, ad-free, and ultra-lightweight." />
   <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="icon" type="image/png" href="./icons/icon-192.png" />
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
   <title>Pure Sudoku — Material 3 Offline Edition</title>
   <style>
     /* ==========================================================================
@@ -969,7 +969,7 @@
       .status-strip { padding: 3px 10px; }
       .stat-pill.center { padding-inline: 8px; }
       .info-banner { padding: 4px 9px; font-size: .74rem; }
-      .numpad { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+      .numpad { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 3px; }
       .num-btn { min-height: 44px; }
       .num-val { font-size: 1.3rem; }
       .num-rem { font-size: .57rem; }
@@ -987,6 +987,49 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
+
+    /* v0.2.2 mobile-first, consistent single-screen play */
+    .brand-logo { overflow:hidden; border-radius:10px; box-shadow:none; padding:0; background:transparent; }
+    .brand-logo img { width:100%; height:100%; display:block; border-radius:inherit; }
+    .status-strip { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.65fr) 40px; gap:4px; padding:4px 8px; min-height:42px; align-items:center; }
+    .status-strip .stat-pill { flex-direction:row; align-items:center; justify-content:center; min-width:0; gap:5px; }
+    .status-strip .stat-pill svg { width:18px; height:18px; fill:currentColor; color:var(--md-on-surface-variant); flex-shrink:0; }
+    .status-strip .stat-value { white-space:nowrap; font-size:.82rem; font-variant-numeric:tabular-nums; }
+    .status-strip .pause-mini-btn { width:40px; height:40px; border-radius:10px; }
+    .visually-hidden { position:absolute!important; width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap; }
+    .numpad { order:1; grid-template-columns:repeat(9,minmax(0,1fr)); gap:3px; }
+    .toolbar { order:2; }
+    .bottom-bar { order:3; }
+    .num-btn { min-width:0; width:100%; min-height:44px; border-radius:10px; padding:4px 0; }
+    .num-rem { display:none; }
+    .num-val { font-size:clamp(.98rem,4.3vw,1.4rem); }
+    .info-banner { min-height:22px; font-size:.72rem; padding:2px 8px; }
+    .tool-btn { min-height:47px; gap:2px; padding:3px 1px; }
+    .tool-btn svg { width:18px; height:18px; }
+    .bottom-bar .md-btn { min-height:36px; padding-block:5px; }
+    #modal-settings .modal-card > div:nth-child(2) { display:flex; flex-direction:column; }
+    #modal-settings .modal-card > div:nth-child(2) > .setting-row:first-child { order:10; }
+    #modal-settings .setting-desc { display:none; }
+    #modal-settings .setting-row { padding-block:10px; }
+    @media (max-width:430px) {
+      body { padding-inline:7px; }
+      .app-shell { gap:5px; }
+      .status-strip { padding:3px 5px; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.65fr) 38px; }
+      .status-strip .stat-pill svg { width:16px; height:16px; }
+      .status-strip .stat-value { font-size:.76rem; }
+      .numpad { grid-template-columns:repeat(9,minmax(0,1fr)); gap:3px; }
+      .num-btn { min-height:44px; }
+      .num-val { font-size:clamp(.98rem,4.3vw,1.2rem); }
+      .tool-btn { min-height:45px; }
+      .bottom-bar .md-btn { min-height:34px; }
+    }
+    @media (max-height:700px) {
+      .top-bar { min-height:38px; }
+      .diff-chip { min-height:34px; padding-block:5px; }
+      .tool-btn { min-height:42px; }
+      .bottom-bar .md-btn { min-height:32px; padding-block:3px; }
+      .info-banner { min-height:20px; }
+    }
   </style>
 </head>
 <body>
@@ -994,7 +1037,7 @@
     <!-- Top Material 3 App Bar -->
     <header class="top-bar">
       <div class="brand">
-        <div class="brand-logo" aria-hidden="true">9</div>
+        <div class="brand-logo" aria-hidden="true"><img src="./icons/icon.svg" alt="" width="34" height="34" /></div>
         <div class="brand-text">
           <h1 class="brand-title">Pure Sudoku</h1>
           <span class="brand-subtitle" id="app-subtitle">Offline &amp; Ad-Free</span>
@@ -1025,25 +1068,13 @@
       <button class="diff-chip" data-diff="daily">Daily</button>
     </nav>
 
-    <!-- Game Status Strip -->
+    <!-- Three compact status readings with accessible names -->
     <section class="status-strip" aria-label="Game Status">
-      <div class="stat-pill">
-        <span class="stat-label">Mistakes</span>
-        <span class="stat-value" id="mistakes-display">0 / 3</span>
-      </div>
-      <div class="stat-pill center">
-        <span class="stat-label">Progress</span>
-        <span class="stat-value" id="progress-display">0%</span>
-      </div>
-      <div class="stat-pill right">
-        <span class="stat-label">Time</span>
-        <div class="stat-value">
-          <span id="timer-display">00:00</span>
-          <button class="pause-mini-btn" id="btn-pause" title="Pause Game" aria-label="Pause Game">
-            <svg id="icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-          </button>
-        </div>
-      </div>
+      <div class="stat-pill" aria-label="Elapsed time"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 2h6v2H9zM12 5a9 9 0 1 0 9 9 9.01 9.01 0 0 0-9-9zm0 16a7 7 0 1 1 7-7 7.01 7.01 0 0 1-7 7zm1-13h-2v7l4.4 2.6 1-1.6-3.4-2z"/></svg><span class="stat-value" id="timer-display">00:00</span></div>
+      <div class="stat-pill" aria-label="Mistakes"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm3.5 4.9L12 12.4 8.5 8.9 7.1 10.3l3.5 3.5-3.5 3.5 1.4 1.4 3.5-3.5 3.5 3.5 1.4-1.4-3.5-3.5 3.5-3.5z"/></svg><span class="stat-value" id="mistakes-display">0 / 3</span></div>
+      <div class="stat-pill" aria-label="Hints remaining"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-4 12.74V17h8v-2.26A7 7 0 0 0 12 2zm2 11.7V15h-4v-1.3a5 5 0 1 1 4 0zM9 19h6v2H9z"/></svg><span class="stat-value" id="hints-display">3</span></div>
+      <button class="pause-mini-btn" id="btn-pause" title="Pause Game" aria-label="Pause Game"><svg id="icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+      <span id="progress-display" class="visually-hidden" aria-live="off">0%</span>
     </section>
 
     <!-- Contextual Feedback & Logical Hint Banner -->
@@ -1196,7 +1227,7 @@
 
         <div class="setting-row">
           <div class="setting-info">
-            <span class="setting-title">Limit Mistakes (3 Strikes)</span>
+            <span class="setting-title">Limit Mistakes</span>
             <span class="setting-desc">End after 3 wrong entries (when checking is enabled)</span>
           </div>
           <button class="switch on" id="toggle-mistake-limit" role="switch" aria-checked="true" aria-label="Toggle Mistake Limit"></button>
@@ -1204,7 +1235,7 @@
 
         <div class="setting-row">
           <div class="setting-info">
-            <span class="setting-title">Highlight Identical Numbers</span>
+            <span class="setting-title">Highlight Matches</span>
             <span class="setting-desc">Highlight all matching digits on the board</span>
           </div>
           <button class="switch on" id="toggle-highlight-same" role="switch" aria-checked="true" aria-label="Toggle Highlight Identical Numbers"></button>
@@ -1212,7 +1243,7 @@
 
         <div class="setting-row">
           <div class="setting-info">
-            <span class="setting-title">Highlight Row, Column &amp; Box</span>
+            <span class="setting-title">Highlight Peers</span>
             <span class="setting-desc">Subtle tonal guide for peer cells</span>
           </div>
           <button class="switch on" id="toggle-highlight-peers" role="switch" aria-checked="true" aria-label="Toggle Highlight Peers"></button>
@@ -1220,7 +1251,7 @@
 
         <div class="setting-row">
           <div class="setting-info">
-            <span class="setting-title">Auto-Remove Pencil Notes</span>
+            <span class="setting-title">Auto-Prune Notes</span>
             <span class="setting-desc">Clear conflicting notes when a digit is placed</span>
           </div>
           <button class="switch on" id="toggle-auto-prune" role="switch" aria-checked="true" aria-label="Toggle Auto Remove Notes"></button>
@@ -1952,6 +1983,7 @@
         document.getElementById('btn-notes').setAttribute('aria-pressed', String(state.notesMode));
         document.getElementById('notes-badge').textContent = state.notesMode ? 'ON' : 'OFF';
         document.getElementById('hint-badge').textContent = `${state.hintsLeft}`;
+        document.getElementById('hints-display').textContent = `${state.hintsLeft}`;
         document.getElementById('btn-undo').disabled = state.undoStack.length === 0 || state.paused || state.gameOver;
         document.getElementById('btn-redo').disabled = state.redoStack.length === 0 || state.paused || state.gameOver;
         document.getElementById('btn-hint').disabled = state.hintsLeft === 0 || state.paused || state.gameOver;
