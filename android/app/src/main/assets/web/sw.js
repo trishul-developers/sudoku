@@ -1,5 +1,5 @@
 /* Offline PWA cache: no network calls other than fetching the site's own assets. */
-const VERSION = 'sudoku-offline-v1.0.0';
+const VERSION = 'sudoku-offline-v0.1.0';
 const ASSETS = [
   './', './index.html', './css/styles.css', './js/engine.js',
   './js/puzzles.js', './js/app.js', './manifest.webmanifest',

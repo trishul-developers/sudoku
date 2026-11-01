@@ -115,15 +115,18 @@ The release workflow refuses to publish if any signing secret is absent. It reco
 
 ### Publish a release
 
+The first `v0.1.0` release is requested by `.github/release-request.json` on `main`. The release workflow creates its tag after tests, signing, and artifact validation; it refuses to reuse an existing tag. Later releases use versioned tags as below.
+
+
 `package.json` controls the web and Android `versionName`; Android `versionCode` is derived monotonically from `MAJOR * 1000000 + MINOR * 1000 + PATCH` (minor and patch each ≤999). Change the version using:
 
 ```sh
-npm run version:set -- 1.0.1
+npm run version:set -- 0.1.1
 npm run check
 npm run package:pwa
 # Review changes, commit, merge into main; then:
-git tag v1.0.1
-git push origin v1.0.1
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 `vX.Y.Z` tags must match `package.json` **exactly** and refer to commits on `main`. `.github/workflows/release.yml` reruns tests and asset synchronization, checks the signing secrets, builds optimized signed `assembleRelease` APK and `bundleRelease` AAB, verifies APK alignment and signature / AAB signature, ensures the Android application still declares no permissions, validates bundled offline assets, creates a versioned PWA ZIP, and publishes GitHub Release assets:

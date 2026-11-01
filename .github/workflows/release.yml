@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - 'v*.*.*'
+    branches:
+      - main
+    paths:
+      - '.github/release-request.json'
 
 permissions:
   contents: write
@@ -32,9 +36,31 @@ jobs:
         with:
           gradle-version: '8.13'
 
-      - name: Verify tag, version and main ancestry
+      - name: Resolve release tag
         env:
-          TAG: ${{ github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            TAG="$GITHUB_REF_NAME"
+          elif [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            TAG="v$(node -p 'require("./package.json").version')"
+            REQUESTED="$(node -p 'require("./.github/release-request.json").tag')"
+            if [[ "$TAG" != "$REQUESTED" ]]; then
+              echo "Request $REQUESTED does not match application version $TAG" >&2
+              exit 1
+            fi
+            if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" > /dev/null 2>&1; then
+              echo "Release tag $TAG already exists; refusing to overwrite it" >&2
+              exit 1
+            fi
+          else
+            echo "Unsupported release ref: $GITHUB_REF" >&2
+            exit 1
+          fi
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Verify tag, version and main ancestry
         run: |
           set -euo pipefail
           if [[ ! "$TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
@@ -115,8 +141,6 @@ jobs:
           unzip -Z1 "$AAB" | grep -Fx 'base/assets/web/index.html'
 
       - name: Package assets and checksums
-        env:
-          TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
           bash scripts/package-pwa.sh
@@ -130,11 +154,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          gh release create "$TAG" dist/*.apk dist/*.aab dist/*.zip dist/SHA256SUMS.txt \
-            --verify-tag --generate-notes --title "Sudoku $TAG"
+          if [[ "$GITHUB_REF_TYPE" == "branch" ]]; then
+            gh release create "$TAG" dist/*.apk dist/*.aab dist/*.zip dist/SHA256SUMS.txt \
+              --target "$GITHUB_SHA" --generate-notes --title "Sudoku $TAG"
+          else
+            gh release create "$TAG" dist/*.apk dist/*.aab dist/*.zip dist/SHA256SUMS.txt \
+              --verify-tag --generate-notes --title "Sudoku $TAG"
+          fi
 
       - name: Clear local signing key
         if: always()
