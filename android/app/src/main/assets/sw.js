@@ -1,5 +1,5 @@
 // Versioned same-origin cache; Android uses local packaged assets instead.
-const CACHE_NAME = 'pure-sudoku-v0.3.0';
+const CACHE_NAME = 'pure-sudoku-v0.2.1';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png'

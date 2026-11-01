@@ -1,5 +1,5 @@
 {
-  "tag": "v0.2.0",
+  "tag": "v0.2.1",
   "source": "Gemini Material 3 Pure Sudoku",
-  "purpose": "Signed APK, AAB, and offline PWA release"
+  "purpose": "Signed APK, AAB, and PWA for Android-first UI/UX fixes (device testing release)"
 }
