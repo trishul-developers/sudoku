@@ -1,4 +1,4 @@
-# The Android JavaScript bridge is annotated @JavascriptInterface and used by WebView.
--keepclassmembers class com.trishul.sudoku.MainActivity$ThemeBridge {
+# Keep the JavascriptInterface methods for the offline Sudoku WebView bridge
+-keepclassmembers class com.puresudoku.material.MainActivity$AndroidBridge {
     @android.webkit.JavascriptInterface <methods>;
 }

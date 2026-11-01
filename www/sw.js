@@ -1,17 +1,23 @@
-/* Offline PWA cache: no network calls other than fetching the site's own assets. */
-const VERSION = 'sudoku-offline-v0.1.0';
+// Versioned same-origin cache; Android uses local packaged assets instead.
+const CACHE_NAME = 'pure-sudoku-v0.2.0';
 const ASSETS = [
-  './', './index.html', './css/styles.css', './js/engine.js',
-  './js/puzzles.js', './js/app.js', './manifest.webmanifest',
-  './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png'
+  './', './index.html', './manifest.webmanifest',
+  './icons/icon-192.png', './icons/icon-512.png'
 ];
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(VERSION).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
+self.addEventListener('install', (event) => {
+  event.waitUntil(caches.open(CACHE_NAME)
+    .then((cache) => cache.addAll(ASSETS))
+    .then(() => self.skipWaiting()));
 });
-self.addEventListener('activate', event => {
-  event.waitUntil(Promise.all([self.clients.claim(), caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith('sudoku-offline-') && k !== VERSION).map(k => caches.delete(k))))]));
+self.addEventListener('activate', (event) => {
+  event.waitUntil(Promise.all([
+    self.clients.claim(),
+    caches.keys().then((keys) => Promise.all(keys
+      .filter((key) => key.startsWith('pure-sudoku-v') && key !== CACHE_NAME)
+      .map((key) => caches.delete(key))))
+  ]));
 });
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || new URL(event.request.url).origin !== self.location.origin) return;
-  event.respondWith(caches.match(event.request).then(hit => hit || fetch(event.request)));
+  event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request)));
 });

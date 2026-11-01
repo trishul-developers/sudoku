@@ -1,151 +1,2608 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-accent="indigo">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f6f7fb">
-  <meta name="description" content="A calm, thoughtfully designed Sudoku game. Four levels, offline, and always ad-free.">
-  <meta name="color-scheme" content="light dark">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Sudoku">
-  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="css/styles.css">
-  <title>Sudoku — A little space to think</title>
-  <script defer src="js/engine.js"></script>
-  <script defer src="js/puzzles.js"></script>
-  <script defer src="js/app.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#F8F9FF" id="meta-theme-color" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="description" content="Minimal, clean Material Design 3 Sudoku. 100% offline, ad-free, and ultra-lightweight." />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="./icons/icon-192.png" />
+  <title>Pure Sudoku — Material 3 Offline Edition</title>
+  <style>
+    /* ==========================================================================
+       MATERIAL DESIGN 3 (MATERIAL YOU) DESIGN TOKENS — ZERO EXTERNAL DEPENDENCIES
+       ========================================================================== */
+    :root, [data-theme="light"][data-accent="indigo"] {
+      --md-bg: #F8F9FF;
+      --md-surface: #FFFFFF;
+      --md-surface-container: #EEF0FA;
+      --md-surface-container-high: #E2E6F5;
+      --md-on-surface: #191C20;
+      --md-on-surface-variant: #44474F;
+      --md-outline: #74777F;
+      --md-outline-variant: #C4C6D0;
+      --md-primary: #3B5BA9;
+      --md-on-primary: #FFFFFF;
+      --md-primary-container: #D8E2FF;
+      --md-on-primary-container: #001A41;
+      --md-secondary-container: #E0E2EC;
+      --md-on-secondary-container: #191C20;
+      --md-cell-peer: #EBF0FC;
+      --md-cell-same: #BBD0FF;
+      --md-cell-selected: #8EB2FF;
+      --md-user-digit: #1E4699;
+      --md-error: #BA1A1A;
+      --md-error-container: #FFDAD6;
+      --md-on-error-container: #410002;
+      --md-success: #146C2E;
+      --md-success-container: #C4EED0;
+      --md-grid-strong: #191C20;
+      --md-grid-weak: #C4C6D0;
+      --md-shadow: 0 2px 10px rgba(25, 28, 32, 0.06);
+      --md-modal-backdrop: rgba(15, 20, 30, 0.45);
+    }
+
+    [data-theme="light"][data-accent="emerald"] {
+      --md-bg: #F6FBF7;
+      --md-surface: #FFFFFF;
+      --md-surface-container: #E8F3EC;
+      --md-surface-container-high: #DAE9DF;
+      --md-primary: #1B6D48;
+      --md-primary-container: #A6F2C7;
+      --md-on-primary-container: #002111;
+      --md-cell-peer: #E5F4EC;
+      --md-cell-same: #B0E6C8;
+      --md-cell-selected: #7ED4A7;
+      --md-user-digit: #0E5837;
+    }
+
+    [data-theme="light"][data-accent="amber"] {
+      --md-bg: #FFFBF7;
+      --md-surface: #FFFFFF;
+      --md-surface-container: #F5EFE6;
+      --md-surface-container-high: #EAE1D3;
+      --md-primary: #825500;
+      --md-primary-container: #FFDDB3;
+      --md-on-primary-container: #291800;
+      --md-cell-peer: #FBF1E3;
+      --md-cell-same: #F7D8A8;
+      --md-cell-selected: #F0BC6E;
+      --md-user-digit: #6E4700;
+    }
+
+    [data-theme="dark"], [data-theme="dark"][data-accent="indigo"] {
+      --md-bg: #10131A;
+      --md-surface: #171B24;
+      --md-surface-container: #1F2430;
+      --md-surface-container-high: #292F3D;
+      --md-on-surface: #E2E2E9;
+      --md-on-surface-variant: #C4C6D0;
+      --md-outline: #8E9099;
+      --md-outline-variant: #373C4A;
+      --md-primary: #ADC6FF;
+      --md-on-primary: #002E69;
+      --md-primary-container: #20428F;
+      --md-on-primary-container: #D8E2FF;
+      --md-secondary-container: #2B303C;
+      --md-on-secondary-container: #E2E2E9;
+      --md-cell-peer: #1D2434;
+      --md-cell-same: #263963;
+      --md-cell-selected: #304E8A;
+      --md-user-digit: #8CB4FF;
+      --md-error: #FFB4AB;
+      --md-error-container: #690005;
+      --md-on-error-container: #FFDAD6;
+      --md-success: #6DD58C;
+      --md-success-container: #0F5223;
+      --md-grid-strong: #8E95A5;
+      --md-grid-weak: #2E3442;
+      --md-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      --md-modal-backdrop: rgba(0, 0, 0, 0.68);
+    }
+
+    [data-theme="dark"][data-accent="emerald"] {
+      --md-bg: #0E1512;
+      --md-surface: #151E19;
+      --md-surface-container: #1C2721;
+      --md-surface-container-high: #26342C;
+      --md-primary: #8BD6AF;
+      --md-on-primary: #003822;
+      --md-primary-container: #005234;
+      --md-on-primary-container: #A6F2C7;
+      --md-cell-peer: #192620;
+      --md-cell-same: #1D4331;
+      --md-cell-selected: #255D43;
+      --md-user-digit: #81DFB0;
+    }
+
+    [data-theme="dark"][data-accent="amber"] {
+      --md-bg: #15120D;
+      --md-surface: #1E1A13;
+      --md-surface-container: #28221A;
+      --md-surface-container-high: #342D23;
+      --md-primary: #FFB951;
+      --md-on-primary: #452B00;
+      --md-primary-container: #633F00;
+      --md-on-primary-container: #FFDDB3;
+      --md-cell-peer: #251F16;
+      --md-cell-same: #473518;
+      --md-cell-selected: #63481D;
+      --md-user-digit: #FFC266;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background-color: var(--md-bg);
+      color: var(--md-on-surface);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: env(safe-area-inset-top, 8px) 12px env(safe-area-inset-bottom, 16px);
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ==========================================================================
+       TOP APP BAR
+       ========================================================================== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 2px;
+      gap: 8px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: var(--md-shadow);
+      flex-shrink: 0;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-size: 1.08rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .brand-subtitle {
+      font-size: 0.72rem;
+      color: var(--md-on-surface-variant);
+      font-weight: 500;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--md-on-surface-variant);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+    }
+
+    .icon-btn:hover {
+      background-color: var(--md-surface-container);
+      color: var(--md-on-surface);
+    }
+
+    .icon-btn:active {
+      transform: scale(0.93);
+    }
+
+    .icon-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* ==========================================================================
+       DIFFICULTY CHIPS & STATUS BAR
+       ========================================================================== */
+    .mode-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      background: var(--md-surface-container);
+      padding: 4px;
+      border-radius: 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .mode-bar::-webkit-scrollbar { display: none; }
+
+    .diff-chip {
+      flex: 1;
+      min-width: fit-content;
+      border: none;
+      background: transparent;
+      color: var(--md-on-surface-variant);
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .diff-chip.active {
+      background: var(--md-surface);
+      color: var(--md-primary);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      background: var(--md-surface);
+      border: 1px solid var(--md-outline-variant);
+      border-radius: 14px;
+      padding: 8px 14px;
+      box-shadow: var(--md-shadow);
+    }
+
+    .stat-pill {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .stat-pill.center {
+      align-items: center;
+      border-left: 1px solid var(--md-outline-variant);
+      border-right: 1px solid var(--md-outline-variant);
+      padding: 0 16px;
+    }
+
+    .stat-pill.right {
+      align-items: flex-end;
+    }
+
+    .stat-label {
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--md-on-surface-variant);
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 0.92rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pause-mini-btn {
+      border: none;
+      background: var(--md-surface-container);
+      color: var(--md-on-surface);
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .pause-mini-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* ==========================================================================
+       SMART HINT / INFO BANNER
+       ========================================================================== */
+    .info-banner {
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 12px;
+      border-radius: 10px;
+      background: var(--md-surface-container);
+      color: var(--md-on-surface-variant);
+      font-size: 0.78rem;
+      font-weight: 500;
+      line-height: 1.3;
+      transition: all 0.2s ease;
+    }
+
+    .info-banner.highlight {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+    }
+
+    .info-banner.error {
+      background: var(--md-error-container);
+      color: var(--md-on-error-container);
+    }
+
+    /* ==========================================================================
+       SUDOKU 9x9 BOARD
+       ========================================================================== */
+    .board-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: var(--md-surface);
+      border: 2.5px solid var(--md-grid-strong);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--md-shadow);
+    }
+
+    .sudoku-grid {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      grid-template-rows: repeat(9, 1fr);
+    }
+
+    .cell {
+      position: relative;
+      border-right: 1px solid var(--md-grid-weak);
+      border-bottom: 1px solid var(--md-grid-weak);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.2rem, 5.2vw, 1.75rem);
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--md-surface);
+      color: var(--md-on-surface);
+      transition: background-color 0.08s ease;
+      outline: none;
+    }
+
+    /* 3x3 Subgrid thick borders */
+    .cell[data-col="2"], .cell[data-col="5"] {
+      border-right: 2.2px solid var(--md-grid-strong);
+    }
+    .cell[data-col="8"] {
+      border-right: none;
+    }
+    .cell[data-row="2"], .cell[data-row="5"] {
+      border-bottom: 2.2px solid var(--md-grid-strong);
+    }
+    .cell[data-row="8"] {
+      border-bottom: none;
+    }
+
+    /* Cell States */
+    .cell.peer {
+      background-color: var(--md-cell-peer);
+    }
+    .cell.same-digit {
+      background-color: var(--md-cell-same);
+    }
+    .cell.selected {
+      background-color: var(--md-cell-selected);
+    }
+    .cell.given {
+      color: var(--md-on-surface);
+      font-weight: 700;
+    }
+    .cell.user-val {
+      color: var(--md-user-digit);
+      font-weight: 600;
+    }
+    .cell.conflict {
+      background-color: var(--md-error-container) !important;
+      color: var(--md-error) !important;
+    }
+    .cell.hint-target {
+      box-shadow: inset 0 0 0 3px var(--md-primary);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0.5; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .cell .digit-pop {
+      animation: popIn 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    /* Pencil Marks (Candidates 3x3 grid inside empty cell) */
+    .notes-grid {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      padding: 2px;
+      pointer-events: none;
+    }
+
+    .note-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(0.5rem, 2.1vw, 0.68rem);
+      font-weight: 600;
+      line-height: 1;
+      color: var(--md-on-surface-variant);
+    }
+
+    .note-item.highlight-note {
+      color: var(--md-primary);
+      font-weight: 800;
+      background: var(--md-primary-container);
+      border-radius: 3px;
+    }
+
+    /* Pause Overlay */
+    .pause-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--md-surface);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      z-index: 10;
+      padding: 24px;
+      text-align: center;
+    }
+    .pause-overlay.active {
+      display: flex;
+    }
+
+    /* ==========================================================================
+       ACTION TOOLBAR & NUMBER PAD
+       ========================================================================== */
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+
+    .tool-btn {
+      position: relative;
+      border: 1px solid var(--md-outline-variant);
+      background: var(--md-surface);
+      color: var(--md-on-surface);
+      border-radius: 12px;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 600;
+      transition: all 0.14s ease;
+    }
+
+    .tool-btn:hover {
+      background: var(--md-surface-container);
+    }
+
+    .tool-btn:active {
+      transform: scale(0.95);
+    }
+
+    .tool-btn.active {
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      border-color: var(--md-primary);
+    }
+
+    .tool-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .tool-badge {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      font-size: 0.58rem;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 8px;
+      background: var(--md-surface-container-high);
+      color: var(--md-on-surface-variant);
+    }
+
+    .tool-btn.active .tool-badge {
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+    }
+
+    /* Number Pad */
+    .numpad {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 5px;
+    }
+
+    .num-btn {
+      border: 1px solid var(--md-outline-variant);
+      background: var(--md-surface);
+      color: var(--md-primary);
+      border-radius: 12px;
+      padding: 8px 0 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      cursor: pointer;
+      box-shadow: var(--md-shadow);
+      transition: all 0.12s ease;
+    }
+
+    .num-btn:hover {
+      background: var(--md-surface-container);
+    }
+
+    .num-btn:active {
+      transform: scale(0.93);
+    }
+
+    .num-btn.locked-digit {
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      border-color: var(--md-primary);
+    }
+
+    .num-btn.completed {
+      opacity: 0.32;
+      box-shadow: none;
+    }
+
+    .num-val {
+      font-size: clamp(1.15rem, 4.5vw, 1.45rem);
+      font-weight: 700;
+      line-height: 1.05;
+    }
+
+    .num-rem {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--md-on-surface-variant);
+    }
+
+    .num-btn.locked-digit .num-rem {
+      color: var(--md-on-primary);
+    }
+
+    .bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .md-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .md-btn-primary {
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+    }
+
+    .md-btn-tonal {
+      background: var(--md-surface-container-high);
+      color: var(--md-on-surface);
+    }
+
+    .md-btn:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    .md-btn:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+
+    .autosave-pill {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--md-primary);
+      background: var(--md-primary-container);
+      padding: 4px 10px;
+      border-radius: 999px;
+      opacity: 0.85;
+      transition: opacity 0.2s ease, transform 0.15s ease;
+    }
+
+    /* ==========================================================================
+       MODALS (STATS, SETTINGS, ANDROID WRAPPER, VICTORY)
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: var(--md-modal-backdrop);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 430px;
+      max-height: 88vh;
+      overflow-y: auto;
+      background: var(--md-surface);
+      color: var(--md-on-surface);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.28);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .stat-card {
+      background: var(--md-surface-container);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-card-val {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--md-primary);
+    }
+
+    .stat-card-lbl {
+      font-size: 0.74rem;
+      color: var(--md-on-surface-variant);
+      font-weight: 600;
+    }
+
+    .stats-filter-bar {
+      display: flex;
+      gap: 4px;
+      background: var(--md-surface-container);
+      padding: 4px;
+      border-radius: 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .stats-filter-bar::-webkit-scrollbar { display: none; }
+
+    .stats-filter-chip {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--md-on-surface-variant);
+      padding: 5px 8px;
+      border-radius: 8px;
+      font-size: 0.73rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .stats-filter-chip.active {
+      background: var(--md-surface);
+      color: var(--md-primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .stats-table-wrap {
+      background: var(--md-surface-container);
+      border-radius: 14px;
+      padding: 8px 10px;
+      overflow-x: auto;
+    }
+
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stats-table th {
+      text-align: right;
+      color: var(--md-on-surface-variant);
+      font-weight: 600;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 6px 6px;
+      border-bottom: 1px solid var(--md-outline-variant);
+    }
+
+    .stats-table th:first-child,
+    .stats-table td:first-child {
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .stats-table td {
+      text-align: right;
+      padding: 7px 6px;
+      border-bottom: 1px solid var(--md-outline-variant);
+      color: var(--md-on-surface);
+    }
+
+    .stats-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .stats-table tr.active-diff-row td {
+      color: var(--md-primary);
+      font-weight: 700;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--md-outline-variant);
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
+    .setting-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .setting-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .setting-desc {
+      font-size: 0.73rem;
+      color: var(--md-on-surface-variant);
+    }
+
+    /* Toggle Switch */
+    .switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      background: var(--md-outline-variant);
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--md-surface);
+      transition: transform 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+
+    .switch.on {
+      background: var(--md-primary);
+    }
+
+    .switch.on::after {
+      transform: translateX(20px);
+      background: var(--md-on-primary);
+    }
+
+    .accent-picker {
+      display: flex;
+      gap: 8px;
+    }
+
+    .accent-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .accent-swatch.active {
+      border-color: var(--md-on-surface);
+      transform: scale(1.1);
+    }
+
+    .code-box {
+      background: var(--md-surface-container);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.74rem;
+      overflow-x: auto;
+      line-height: 1.45;
+      color: var(--md-on-surface);
+    }
+
+    @media (max-height: 700px) {
+      .app-shell { gap: 6px; }
+      .board-wrapper { max-width: 390px; margin: 0 auto; }
+      .tool-btn { padding: 6px 4px; }
+      .num-btn { padding: 6px 0 4px; }
+    }
+  </style>
 </head>
 <body>
-  <svg class="symbol-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="19" height="19" rx="3"/><path d="M8.83 3v18M15.16 3v18M3 8.83h18M3 15.16h18"/><rect class="symbol-dot" x="5" y="5" width="2" height="2" rx="1"/><rect class="symbol-dot" x="17" y="11" width="2" height="2" rx="1"/><rect class="symbol-dot" x="11" y="17" width="2" height="2" rx="1"/></symbol>
-    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></symbol>
-    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12 3v2m0 14v2M4.22 7.5l1.73 1m12.1 7 1.73 1M3 12h2m14 0h2M4.22 16.5l1.73-1m12.1-7 1.73-1"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></symbol>
-    <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
-    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5a1 1 0 0 1 1.53-.85l10 6.5a1 1 0 0 1 0 1.7l-10 6.5A1 1 0 0 1 8 18.5z"/></symbol>
-    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5M4 9h10a6 6 0 0 1 0 12h-2"/></symbol>
-    <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5m5 5H10a6 6 0 0 0 0 12h2"/></symbol>
-    <symbol id="i-eraser" viewBox="0 0 24 24"><path d="m8 20-5-5a2 2 0 0 1 0-2.83L12.17 3a2 2 0 0 1 2.83 0l6 6a2 2 0 0 1 0 2.83L13 20H8ZM8 20h13M6.5 9.5l8 8"/></symbol>
-    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="m15.5 5.5 3 3M3.5 20.5l4.5-.8L20.6 7.1a2 2 0 0 0-2.8-2.8L5.2 16.9zM3 21h18"/></symbol>
-    <symbol id="i-hint" viewBox="0 0 24 24"><path d="M9 18h6m-5 3h4m-4-6a6 6 0 1 1 4 0c-.9.6-1 1.2-1 2h-2c0-.8-.1-1.4-1-2Z"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-    <symbol id="i-close" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
-    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 3h10v7a5 5 0 0 1-10 0V3ZM7 5H4v3a4 4 0 0 0 4 4m9-7h3v3a4 4 0 0 1-4 4m-4 3v5m-5 0h10"/></symbol>
-  </svg>
-
   <div class="app-shell">
-    <header class="topbar">
-      <div class="brand"><span class="brand-mark"><svg><use href="#i-grid"/></svg></span><span class="brand-name">sudoku<span class="brand-period">.</span></span></div>
+    <!-- Top Material 3 App Bar -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">9</div>
+        <div class="brand-text">
+          <h1 class="brand-title">Pure Sudoku</h1>
+          <span class="brand-subtitle" id="app-subtitle">Material 3 • Offline &amp; Ad-Free</span>
+        </div>
+      </div>
       <div class="top-actions">
-        <span class="quiet-label">A little space to think</span>
-        <button id="theme-button" class="icon-button" type="button" title="Toggle light and dark theme" aria-label="Toggle theme"><svg><use href="#i-sun"/></svg></button>
-        <button id="settings-button" class="icon-button" type="button" title="Settings" aria-label="Settings"><svg><use href="#i-settings"/></svg></button>
+        <button class="icon-btn" id="btn-new-game" title="New Puzzle" aria-label="New Puzzle">
+          <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        </button>
+        <button class="icon-btn" id="btn-stats" title="Statistics" aria-label="Statistics">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        </button>
+        <button class="icon-btn" id="btn-theme" title="Toggle Light/Dark Mode" aria-label="Toggle Theme">
+          <svg id="icon-theme" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+        </button>
+        <button class="icon-btn" id="btn-settings" title="Settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        </button>
       </div>
     </header>
 
-    <main class="workspace">
-      <section class="game-column" aria-label="Sudoku game">
-        <div class="section-heading">
-          <div><p class="eyebrow">YOUR MOMENT OF FOCUS</p><h1>Make your next move.</h1></div>
-          <button id="new-button" class="button primary" type="button"><svg><use href="#i-plus"/></svg> New game</button>
-        </div>
-        <div class="game-panel">
-          <div class="game-meta">
-            <div class="meta-pill" id="difficulty-pill">Easy</div>
-            <div class="game-status" id="game-status">Ready when you are</div>
-            <div class="timer"><svg><use href="#i-clock"/></svg><span id="timer" aria-label="Elapsed time">00:00</span></div>
-            <button id="pause-button" class="icon-button pause-button" type="button" title="Pause game" aria-label="Pause game"><svg><use href="#i-pause"/></svg></button>
-          </div>
-          <div class="board-wrap">
-            <div id="board" class="board" role="group" aria-label="Sudoku puzzle, 9 rows and 9 columns"></div>
-            <div id="pause-cover" class="pause-cover" hidden>
-              <div class="pause-art"><svg><use href="#i-pause"/></svg></div>
-              <h2>Take your time.</h2>
-              <p>Your puzzle will be right here.</p>
-              <button id="resume-button" class="button primary" type="button"><svg><use href="#i-play"/></svg> Resume game</button>
-            </div>
-          </div>
-          <div class="input-zone" aria-label="Game controls">
-            <div class="toolstrip">
-              <button id="undo-button" type="button" class="tool-button" title="Undo (Ctrl+Z)"><svg><use href="#i-undo"/></svg><span>Undo</span></button>
-              <button id="redo-button" type="button" class="tool-button" title="Redo (Ctrl+Y)"><svg><use href="#i-redo"/></svg><span>Redo</span></button>
-              <button id="erase-button" type="button" class="tool-button" title="Erase selected cell (Backspace)"><svg><use href="#i-eraser"/></svg><span>Erase</span></button>
-              <button id="notes-button" type="button" class="tool-button" aria-pressed="false" title="Toggle notes (N)"><svg><use href="#i-pencil"/></svg><span>Notes</span><i class="mode-dot" aria-hidden="true"></i></button>
-              <button id="hint-button" type="button" class="tool-button" title="Get a hint (H)"><svg><use href="#i-hint"/></svg><span>Hint</span></button>
-            </div>
-            <div id="number-pad" class="number-pad" role="group" aria-label="Enter a digit"></div>
-            <p class="input-tip">Select a cell, then choose a number. <span>Keyboard: 1–9 · N for notes</span></p>
-          </div>
-        </div>
-      </section>
+    <!-- Difficulty Selector Bar -->
+    <nav class="mode-bar" aria-label="Difficulty">
+      <button class="diff-chip active" data-diff="easy">Easy</button>
+      <button class="diff-chip" data-diff="medium">Medium</button>
+      <button class="diff-chip" data-diff="hard">Hard</button>
+      <button class="diff-chip" data-diff="expert">Expert</button>
+      <button class="diff-chip" data-diff="daily">Daily</button>
+    </nav>
 
-      <aside class="side-column" aria-label="Game progress and help">
-        <section class="aside-card progress-card">
-          <div class="card-title-line"><span class="eyebrow">AT A GLANCE</span><span class="small-sparkle" aria-hidden="true">✦</span></div>
-          <h2>Your progress</h2>
-          <div class="progress-top"><strong id="progress-label">0 / 81</strong><span id="progress-percent">0%</span></div>
-          <div class="progress-track" role="progressbar" id="progress-track" aria-label="Puzzle progress" aria-valuemin="0" aria-valuemax="81" aria-valuenow="0"><div id="progress-fill"></div></div>
-          <div class="small-stats"><div class="stat"><span>Mistakes</span><strong id="mistakes-label">0</strong></div><div class="stat"><span>Hints used</span><strong id="hints-label">0</strong></div></div>
-        </section>
-        <section class="aside-card journey-card">
-          <span class="eyebrow">YOUR JOURNEY</span>
-          <h2>One square at a time.</h2>
-          <p>There’s no rush. Find the next number, follow the pattern, and enjoy the quiet.</p>
-          <div class="journey-stats"><div><strong id="solved-label">0</strong><span>Puzzles solved</span></div><div><strong id="best-label">—</strong><span>Best this level</span></div></div>
-        </section>
-        <section class="aside-card guide-card">
-          <span class="eyebrow">QUICK GUIDE</span>
-          <h2>The simple rules</h2>
-          <p>Fill each row, column and 3 × 3 box with the numbers 1 through 9, without repeating any number.</p>
-          <div class="guide-line"><span class="guide-icon">✎</span><span>Use <b>Notes</b> to pencil in possible numbers.</span></div>
-          <div class="guide-line"><span class="guide-icon">⌘</span><span>Use arrow keys to move between cells.</span></div>
-        </section>
-        <p class="privacy-note"><span aria-hidden="true">♡</span> Offline by design. Ad-free. No tracking. Your progress stays on this device.</p>
-      </aside>
+    <!-- Game Status Strip -->
+    <section class="status-strip" aria-label="Game Status">
+      <div class="stat-pill">
+        <span class="stat-label">Mistakes</span>
+        <span class="stat-value" id="mistakes-display">0 / 3</span>
+      </div>
+      <div class="stat-pill center">
+        <span class="stat-label">Progress</span>
+        <span class="stat-value" id="progress-display">0%</span>
+      </div>
+      <div class="stat-pill right">
+        <span class="stat-label">Time</span>
+        <div class="stat-value">
+          <span id="timer-display">00:00</span>
+          <button class="pause-mini-btn" id="btn-pause" title="Pause Game" aria-label="Pause Game">
+            <svg id="icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contextual Feedback & Logical Hint Banner -->
+    <div class="info-banner" id="info-banner" role="status" aria-live="polite">
+      <span>Select any cell or tap a number to begin.</span>
+    </div>
+
+    <!-- 9x9 Sudoku Grid -->
+    <main class="board-wrapper">
+      <div class="sudoku-grid" id="sudoku-grid" role="grid" aria-label="Sudoku 9 by 9 Grid"></div>
+
+      <!-- Pause Overlay -->
+      <div class="pause-overlay" id="pause-overlay">
+        <svg style="width:48px;height:48px;fill:var(--md-primary)" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+        <h2 style="font-size:1.25rem;font-weight:700;">Game Paused</h2>
+        <p style="font-size:0.84rem;color:var(--md-on-surface-variant);max-width:260px;">
+          Board hidden to keep your solve fair. Zero CPU cycles used while paused.
+        </p>
+        <button class="md-btn md-btn-primary" id="btn-resume">Resume Puzzle</button>
+      </div>
     </main>
-    <footer class="footer">A calmer kind of challenge. <span>Made to be played, not monetized.</span></footer>
+
+    <!-- Action Controls -->
+    <section class="toolbar" aria-label="Puzzle Actions">
+      <button class="tool-btn" id="btn-undo" title="Undo (Ctrl+Z)">
+        <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+        <span>Undo</span>
+      </button>
+      <button class="tool-btn" id="btn-redo" title="Redo (Ctrl+Y)">
+        <svg viewBox="0 0 24 24"><path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16a8.002 8.002 0 0 1 7.6-5.5c1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/></svg>
+        <span>Redo</span>
+      </button>
+      <button class="tool-btn" id="btn-erase" title="Erase Cell (Backspace)">
+        <svg viewBox="0 0 24 24"><path d="M16.24 3.56l4.95 4.94c.78.79.78 2.05 0 2.84L12 20.53a4.008 4.008 0 0 1-5.66 0L2.81 17c-.78-.79-.78-2.05 0-2.84l10.6-10.6c.79-.78 2.05-.78 2.83 0zM4.22 15.58l3.54 3.53c.78.79 2.04.79 2.83 0l3.53-3.53-4.95-4.95-4.95 4.95z"/></svg>
+        <span>Erase</span>
+      </button>
+      <button class="tool-btn" id="btn-notes" title="Pencil Notes Mode (N)">
+        <span class="tool-badge" id="notes-badge">OFF</span>
+        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        <span>Notes</span>
+      </button>
+      <button class="tool-btn" id="btn-hint" title="Smart Logical Hint (H)">
+        <span class="tool-badge" id="hint-badge">3</span>
+        <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+        <span>Hint</span>
+      </button>
+    </section>
+
+    <!-- 1-9 Number Pad -->
+    <section class="numpad" id="numpad" aria-label="Number Pad"></section>
+
+    <!-- Secondary Utility Row -->
+    <div class="bottom-bar">
+      <button class="md-btn md-btn-tonal" id="btn-fast-mode" title="Lock a number to place it rapidly across multiple cells">
+        <span>Input: Cell-First</span>
+      </button>
+      <button class="md-btn md-btn-tonal" id="btn-auto-notes" title="Compute all valid pencil candidates for empty cells">
+        <span>Auto-Notes</span>
+      </button>
+    </div>
   </div>
 
-  <dialog id="new-dialog" class="modal" aria-labelledby="new-title">
-    <form method="dialog" class="dialog-inner" id="new-form">
-      <div class="dialog-heading"><div><span class="eyebrow">A FRESH START</span><h2 id="new-title">Choose your challenge</h2></div><button type="button" class="icon-button close-dialog" aria-label="Close"><svg><use href="#i-close"/></svg></button></div>
-      <p class="dialog-subtitle">Each puzzle has one unique solution. Play at your own pace.</p>
-      <fieldset class="difficulty-options"><legend class="sr-only">Difficulty</legend>
-        <label class="level-option"><input type="radio" name="difficulty" value="easy" checked><span class="level-content"><strong>Easy</strong><small>Find your rhythm</small></span><span class="level-symbol" aria-hidden="true">●○○○</span></label>
-        <label class="level-option"><input type="radio" name="difficulty" value="medium"><span class="level-content"><strong>Medium</strong><small>Think a step ahead</small></span><span class="level-symbol" aria-hidden="true">●●○○</span></label>
-        <label class="level-option"><input type="radio" name="difficulty" value="hard"><span class="level-content"><strong>Hard</strong><small>See beyond the obvious</small></span><span class="level-symbol" aria-hidden="true">●●●○</span></label>
-        <label class="level-option"><input type="radio" name="difficulty" value="expert"><span class="level-content"><strong>Expert</strong><small>For the deep thinkers</small></span><span class="level-symbol" aria-hidden="true">●●●●</span></label>
-      </fieldset>
-      <p class="replace-note" id="replace-note">Starting a new game replaces your current puzzle.</p>
-      <button class="button primary full-button" id="start-button" type="submit">Start puzzle <span aria-hidden="true">→</span></button>
-    </form>
-  </dialog>
-  <dialog id="settings-dialog" class="modal" aria-labelledby="settings-title">
-    <div class="dialog-inner">
-      <div class="dialog-heading"><div><span class="eyebrow">MAKE IT YOURS</span><h2 id="settings-title">Preferences</h2></div><button type="button" class="icon-button close-dialog" aria-label="Close"><svg><use href="#i-close"/></svg></button></div>
-      <div class="settings-row"><label for="theme-select"><strong>Appearance</strong><small>Choose the look that feels right.</small></label><select id="theme-select"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
-      <label class="settings-row"><span><strong>Highlight matching numbers</strong><small>See other instances of a selected digit.</small></span><input type="checkbox" id="highlight-toggle" checked role="switch"></label>
-      <label class="settings-row"><span><strong>Show incorrect entries</strong><small>Mark numbers that don't match the solution.</small></span><input type="checkbox" id="errors-toggle" checked role="switch"></label>
-      <label class="settings-row"><span><strong>Clear related notes</strong><small>Remove matching pencil marks after a correct entry.</small></span><input type="checkbox" id="autonotes-toggle" checked role="switch"></label>
-      <button id="settings-done" class="button primary full-button" type="button">Done</button>
-      <p class="settings-footnote">Everything is saved locally. No account, internet connection, ads or telemetry.</p>
+  <!-- ==========================================================================
+       MODAL: STATISTICS (OVERALL & PER-DIFFICULTY BREAKDOWN)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="modal-stats" role="dialog" aria-modal="true" aria-labelledby="title-stats">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="title-stats">Player Statistics</h2>
+        <button class="icon-btn" data-close="modal-stats" aria-label="Close">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+
+      <div class="stats-filter-bar" id="stats-filter-bar" role="tablist" aria-label="Filter Statistics by Difficulty">
+        <button class="stats-filter-chip active" data-stat-diff="all" role="tab">All</button>
+        <button class="stats-filter-chip" data-stat-diff="easy" role="tab">Easy</button>
+        <button class="stats-filter-chip" data-stat-diff="medium" role="tab">Medium</button>
+        <button class="stats-filter-chip" data-stat-diff="hard" role="tab">Hard</button>
+        <button class="stats-filter-chip" data-stat-diff="expert" role="tab">Expert</button>
+        <button class="stats-filter-chip" data-stat-diff="daily" role="tab">Daily</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-card-val" id="stat-played">0</span>
+          <span class="stat-card-lbl" id="lbl-stat-played">Games Played</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-val" id="stat-won">0</span>
+          <span class="stat-card-lbl" id="lbl-stat-won">Puzzles Solved</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-val" id="stat-streak">0</span>
+          <span class="stat-card-lbl" id="lbl-stat-streak">Current Streak</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-val" id="stat-best-time">--:--</span>
+          <span class="stat-card-lbl" id="lbl-stat-best">Best Time</span>
+        </div>
+      </div>
+
+      <div class="stats-table-wrap">
+        <table class="stats-table" aria-label="Difficulty Wise Statistics">
+          <thead>
+            <tr>
+              <th>Level</th>
+              <th>Played</th>
+              <th>Solved</th>
+              <th>Win %</th>
+              <th>Best</th>
+              <th>Avg</th>
+            </tr>
+          </thead>
+          <tbody id="stats-diff-tbody"></tbody>
+        </table>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">
+        <button class="md-btn md-btn-tonal" id="btn-reset-stats">Reset Stats</button>
+        <button class="md-btn md-btn-primary" data-close="modal-stats">Done</button>
+      </div>
     </div>
-  </dialog>
-  <dialog id="win-dialog" class="modal win-modal" aria-labelledby="win-title">
-    <div class="dialog-inner win-inner">
-      <div class="win-medal"><svg><use href="#i-trophy"/></svg></div>
-      <span class="eyebrow">PUZZLE COMPLETE</span><h2 id="win-title">Beautifully done.</h2>
-      <p>All 81 squares, just where they belong.</p>
-      <div class="win-stats"><div><span>Time</span><strong id="win-time">00:00</strong></div><div><span>Difficulty</span><strong id="win-level">Easy</strong></div><div><span>Mistakes</span><strong id="win-mistakes">0</strong></div></div>
-      <button id="win-new" type="button" class="button primary full-button">Play another <span aria-hidden="true">→</span></button>
-      <button id="win-close" type="button" class="text-button">Admire my puzzle</button>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: SETTINGS
+       ========================================================================== -->
+  <div class="modal-backdrop" id="modal-settings" role="dialog" aria-modal="true" aria-labelledby="title-settings">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="title-settings">Material UI &amp; Gameplay Settings</h2>
+        <button class="icon-btn" data-close="modal-settings" aria-label="Close">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+
+      <div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Material You Color Palette</span>
+            <span class="setting-desc">Adaptive tonal surface &amp; accent theme</span>
+          </div>
+          <div class="accent-picker">
+            <button class="accent-swatch active" data-accent-pick="indigo" style="background:#3B5BA9" aria-label="Indigo Theme"></button>
+            <button class="accent-swatch" data-accent-pick="emerald" style="background:#1B6D48" aria-label="Emerald Theme"></button>
+            <button class="accent-swatch" data-accent-pick="amber" style="background:#825500" aria-label="Amber Theme"></button>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Limit Mistakes (3 Strikes)</span>
+            <span class="setting-desc">Game ends if 3 invalid placements are made</span>
+          </div>
+          <button class="switch on" id="toggle-mistake-limit" aria-label="Toggle Mistake Limit"></button>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Highlight Identical Numbers</span>
+            <span class="setting-desc">Highlight all matching digits on the board</span>
+          </div>
+          <button class="switch on" id="toggle-highlight-same" aria-label="Toggle Highlight Identical Numbers"></button>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Highlight Row, Column &amp; Box</span>
+            <span class="setting-desc">Subtle tonal guide for peer cells</span>
+          </div>
+          <button class="switch on" id="toggle-highlight-peers" aria-label="Toggle Highlight Peers"></button>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Auto-Remove Pencil Notes</span>
+            <span class="setting-desc">Clear conflicting notes when a digit is placed</span>
+          </div>
+          <button class="switch on" id="toggle-auto-prune" aria-label="Toggle Auto Remove Notes"></button>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Synthesized Tactile Audio</span>
+            <span class="setting-desc">Zero-asset Web Audio micro-feedback</span>
+          </div>
+          <button class="switch on" id="toggle-sound" aria-label="Toggle Sound"></button>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="autosave-pill" id="settings-autosave-status">Changes auto-save instantly</span>
+        <button class="md-btn md-btn-tonal" data-close="modal-settings">Close</button>
+      </div>
     </div>
-  </dialog>
-  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: VICTORY / GAME OVER
+       ========================================================================== -->
+  <div class="modal-backdrop" id="modal-endgame" role="dialog" aria-modal="true" aria-labelledby="title-endgame">
+    <div class="modal-card" style="text-align:center;align-items:center;">
+      <div class="brand-logo" style="width:52px;height:52px;border-radius:16px;font-size:24px;" id="endgame-badge">✓</div>
+      <h2 class="modal-title" id="title-endgame">Puzzle Solved!</h2>
+      <p style="font-size:0.86rem;color:var(--md-on-surface-variant);" id="endgame-subtitle">
+        Clean deduction and zero wasted resources.
+      </p>
+      <div class="stats-grid" style="width:100%;">
+        <div class="stat-card">
+          <span class="stat-card-val" id="end-time">00:00</span>
+          <span class="stat-card-lbl">Solve Time</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-val" id="end-diff">Easy</span>
+          <span class="stat-card-lbl">Difficulty</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;width:100%;justify-content:center;">
+        <button class="md-btn md-btn-tonal" id="btn-end-close">Review Board</button>
+        <button class="md-btn md-btn-primary" id="btn-end-new">Play Another</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ========================================================================
+         1. ULTRA-FAST BITMASK SUDOKU GENERATOR & SOLVER (< 2ms, 0 ALLOCATIONS)
+         ======================================================================== */
+      const ALL_MASK = 0x1FF; // 9 bits: 0b111111111
+
+      function boxIndex(r, c) {
+        return ((r / 3) | 0) * 3 + ((c / 3) | 0);
+      }
+
+      function popcount9(mask) {
+        let count = 0;
+        while (mask) {
+          mask &= (mask - 1);
+          count++;
+        }
+        return count;
+      }
+
+      // Seeded PRNG (Mulberry32) for deterministic Daily Challenge or random play
+      function createRNG(seed) {
+        let a = seed >>> 0;
+        return function () {
+          a |= 0;
+          a = (a + 0x6D2B79F5) | 0;
+          let t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function shuffleArray(arr, rng) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(rng() * (i + 1));
+          const tmp = arr[i];
+          arr[i] = arr[j];
+          arr[j] = tmp;
+        }
+        return arr;
+      }
+
+      // Count number of valid solutions up to `limit` (default 2) using MRV bitmask search
+      function countSolutions(board, limit) {
+        const rowMask = new Int32Array(9);
+        const colMask = new Int32Array(9);
+        const boxMask = new Int32Array(9);
+
+        for (let i = 0; i < 81; i++) {
+          const val = board[i];
+          if (val !== 0) {
+            const r = (i / 9) | 0;
+            const c = i % 9;
+            const b = boxIndex(r, c);
+            const bit = 1 << (val - 1);
+            if ((rowMask[r] & bit) || (colMask[c] & bit) || (boxMask[b] & bit)) {
+              return 0; // Invalid board state
+            }
+            rowMask[r] |= bit;
+            colMask[c] |= bit;
+            boxMask[b] |= bit;
+          }
+        }
+
+        let solutions = 0;
+
+        function backtrack() {
+          if (solutions >= limit) return;
+
+          // Find empty cell with Minimum Remaining Values (MRV)
+          let bestIdx = -1;
+          let bestCount = 10;
+          let bestMask = 0;
+
+          for (let i = 0; i < 81; i++) {
+            if (board[i] === 0) {
+              const r = (i / 9) | 0;
+              const c = i % 9;
+              const b = boxIndex(r, c);
+              const avail = ALL_MASK & ~(rowMask[r] | colMask[c] | boxMask[b]);
+              if (avail === 0) return; // Dead end
+              const cnt = popcount9(avail);
+              if (cnt < bestCount) {
+                bestCount = cnt;
+                bestIdx = i;
+                bestMask = avail;
+                if (cnt === 1) break; // Naked single
+              }
+            }
+          }
+
+          if (bestIdx === -1) {
+            solutions++;
+            return;
+          }
+
+          const r = (bestIdx / 9) | 0;
+          const c = bestIdx % 9;
+          const b = boxIndex(r, c);
+
+          let mask = bestMask;
+          while (mask) {
+            const bit = mask & -mask;
+            mask ^= bit;
+            const digit = Math.log2(bit) + 1;
+
+            board[bestIdx] = digit;
+            rowMask[r] |= bit;
+            colMask[c] |= bit;
+            boxMask[b] |= bit;
+
+            backtrack();
+
+            rowMask[r] ^= bit;
+            colMask[c] ^= bit;
+            boxMask[b] ^= bit;
+            board[bestIdx] = 0;
+
+            if (solutions >= limit) return;
+          }
+        }
+
+        backtrack();
+        return solutions;
+      }
+
+      // Generate a complete valid 9x9 Sudoku solution grid
+      function generateFullSolution(rng) {
+        const board = new Int32Array(81);
+        const rowMask = new Int32Array(9);
+        const colMask = new Int32Array(9);
+        const boxMask = new Int32Array(9);
+
+        function fillCell(idx) {
+          if (idx === 81) return true;
+          const r = (idx / 9) | 0;
+          const c = idx % 9;
+          const b = boxIndex(r, c);
+          const avail = ALL_MASK & ~(rowMask[r] | colMask[c] | boxMask[b]);
+          if (avail === 0) return false;
+
+          const digits = [];
+          for (let d = 1; d <= 9; d++) {
+            if (avail & (1 << (d - 1))) digits.push(d);
+          }
+          shuffleArray(digits, rng);
+
+          for (let i = 0; i < digits.length; i++) {
+            const d = digits[i];
+            const bit = 1 << (d - 1);
+            board[idx] = d;
+            rowMask[r] |= bit;
+            colMask[c] |= bit;
+            boxMask[b] |= bit;
+
+            if (fillCell(idx + 1)) return true;
+
+            rowMask[r] ^= bit;
+            colMask[c] ^= bit;
+            boxMask[b] ^= bit;
+            board[idx] = 0;
+          }
+          return false;
+        }
+
+        fillCell(0);
+        return Array.from(board);
+      }
+
+      // Generate a unique-solution Sudoku puzzle for the given difficulty
+      function generatePuzzle(difficulty) {
+        let seed = (Date.now() ^ Math.floor(Math.random() * 0xFFFFFFFF)) >>> 0;
+        if (difficulty === 'daily') {
+          const now = new Date();
+          const dateStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+          let hash = 2166136261;
+          for (let i = 0; i < dateStr.length; i++) {
+            hash ^= dateStr.charCodeAt(i);
+            hash = Math.imul(hash, 16777619);
+          }
+          seed = hash >>> 0;
+        }
+
+        const rng = createRNG(seed);
+        const solution = generateFullSolution(rng);
+        const puzzle = solution.slice();
+
+        const targetGivensMap = {
+          easy: 43,
+          medium: 35,
+          hard: 29,
+          expert: 24,
+          daily: 33
+        };
+        const targetGivens = targetGivensMap[difficulty] || 36;
+
+        // Create symmetric cell pairs for aesthetic Material grid balance
+        const pairs = [];
+        const visited = new Uint8Array(81);
+        for (let i = 0; i < 81; i++) {
+          if (!visited[i]) {
+            const sym = 80 - i;
+            visited[i] = 1;
+            visited[sym] = 1;
+            pairs.push(i === sym ? [i] : [i, sym]);
+          }
+        }
+        shuffleArray(pairs, rng);
+
+        let givens = 81;
+        for (let p = 0; p < pairs.length; p++) {
+          if (givens <= targetGivens) break;
+          const pair = pairs[p];
+          if (givens - pair.length < targetGivens && pair.length === 2) continue;
+
+          const saved = pair.map(idx => puzzle[idx]);
+          for (let k = 0; k < pair.length; k++) puzzle[pair[k]] = 0;
+
+          const testCopy = Int32Array.from(puzzle);
+          if (countSolutions(testCopy, 2) === 1) {
+            givens -= pair.length;
+          } else {
+            for (let k = 0; k < pair.length; k++) puzzle[pair[k]] = saved[k];
+          }
+        }
+
+        // Second single-cell pass if needed to reach exact difficulty target
+        if (givens > targetGivens) {
+          const indices = [];
+          for (let i = 0; i < 81; i++) if (puzzle[i] !== 0) indices.push(i);
+          shuffleArray(indices, rng);
+          for (let i = 0; i < indices.length; i++) {
+            if (givens <= targetGivens) break;
+            const idx = indices[i];
+            const backup = puzzle[idx];
+            puzzle[idx] = 0;
+            if (countSolutions(Int32Array.from(puzzle), 2) === 1) {
+              givens--;
+            } else {
+              puzzle[idx] = backup;
+            }
+          }
+        }
+
+        return { puzzle, solution };
+      }
+
+      /* ========================================================================
+         2. SYNTHESIZED WEB AUDIO & NATIVE ANDROID HAPTIC FEEDBACK
+         ======================================================================== */
+      let audioCtx = null;
+
+      function triggerHaptic(type) {
+        try {
+          if (window.AndroidBridge && typeof window.AndroidBridge.haptic === 'function') {
+            window.AndroidBridge.haptic(type || 'tick');
+            return;
+          }
+          if (navigator.vibrate) {
+            navigator.vibrate(type === 'error' ? [25, 40, 25] : 8);
+          }
+        } catch (_) {}
+      }
+
+      function playTone(freq, durationMs, type, gainLevel) {
+        if (!state.settings.sound) return;
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          if (!audioCtx) audioCtx = new AudioContextClass();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type || 'sine';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+          const vol = gainLevel || 0.04;
+          gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + durationMs / 1000);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + durationMs / 1000);
+        } catch (_) {}
+      }
+
+      function soundTap() { playTone(520, 35, 'sine', 0.025); triggerHaptic('tick'); }
+      function soundPlace() { playTone(660, 55, 'triangle', 0.04); triggerHaptic('tick'); }
+      function soundError() { playTone(210, 160, 'sawtooth', 0.05); triggerHaptic('error'); }
+      function soundWin() {
+        [523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {
+          setTimeout(() => playTone(f, 180, 'triangle', 0.05), idx * 90);
+        });
+        triggerHaptic('success');
+      }
+
+      /* ========================================================================
+         3. APPLICATION STATE & LOCALSTORAGE PERSISTENCE
+         ======================================================================== */
+      const STORAGE_KEY = 'pure_sudoku_m3_state_v1';
+
+      const state = {
+        difficulty: 'easy',
+        givens: new Array(81).fill(0),
+        board: new Array(81).fill(0),
+        solution: new Array(81).fill(0),
+        notes: new Array(81).fill(0), // 9-bit bitmask per cell
+        selectedIdx: 0,
+        notesMode: false,
+        fastMode: false,
+        lockedDigit: 0,
+        mistakes: 0,
+        maxMistakes: 3,
+        hintsLeft: 3,
+        hintHighlightIdx: -1,
+        seconds: 0,
+        paused: false,
+        gameOver: false,
+        undoStack: [],
+        redoStack: [],
+        settings: {
+          theme: 'light',
+          accent: 'indigo',
+          mistakeLimit: true,
+          highlightSame: true,
+          highlightPeers: true,
+          autoPruneNotes: true,
+          sound: true
+        },
+        statsFilter: 'all',
+        stats: {
+          played: 0,
+          won: 0,
+          streak: 0,
+          bestTimes: { easy: null, medium: null, hard: null, expert: null, daily: null },
+          byDifficulty: {
+            easy: { played: 0, won: 0, streak: 0, bestTime: null, totalTime: 0 },
+            medium: { played: 0, won: 0, streak: 0, bestTime: null, totalTime: 0 },
+            hard: { played: 0, won: 0, streak: 0, bestTime: null, totalTime: 0 },
+            expert: { played: 0, won: 0, streak: 0, bestTime: null, totalTime: 0 },
+            daily: { played: 0, won: 0, streak: 0, bestTime: null, totalTime: 0 }
+          }
+        }
+      };
+
+      const DIFF_KEYS = ['easy', 'medium', 'hard', 'expert', 'daily'];
+
+      function createFreshStats() {
+        return {
+          played: 0,
+          won: 0,
+          streak: 0,
+          bestTimes: { easy: null, medium: null, hard: null, expert: null, daily: null },
+          byDifficulty: {
+            easy: { played: 0, won: 0, streak: 0, bestTime: null, totalTime: 0 },
+            medium: { played: 0, won: 0, streak: 0, bestTime: null, totalTime: 0 },
+            hard: { played: 0, won: 0, streak: 0, bestTime: null, totalTime: 0 },
+            expert: { played: 0, won: 0, streak: 0, bestTime: null, totalTime: 0 },
+            daily: { played: 0, won: 0, streak: 0, bestTime: null, totalTime: 0 }
+          }
+        };
+      }
+
+      function normalizeStats(loadedStats) {
+        const fresh = createFreshStats();
+        if (!loadedStats) return fresh;
+        fresh.played = loadedStats.played || 0;
+        fresh.won = loadedStats.won || 0;
+        fresh.streak = loadedStats.streak || 0;
+        if (loadedStats.bestTimes) {
+          DIFF_KEYS.forEach(k => {
+            if (loadedStats.bestTimes[k]) fresh.bestTimes[k] = loadedStats.bestTimes[k];
+          });
+        }
+        if (loadedStats.byDifficulty) {
+          DIFF_KEYS.forEach(k => {
+            const src = loadedStats.byDifficulty[k];
+            if (src) {
+              fresh.byDifficulty[k] = {
+                played: src.played || 0,
+                won: src.won || 0,
+                streak: src.streak || 0,
+                bestTime: src.bestTime || fresh.bestTimes[k] || null,
+                totalTime: src.totalTime || 0
+              };
+            } else if (fresh.bestTimes[k]) {
+              fresh.byDifficulty[k].bestTime = fresh.bestTimes[k];
+            }
+          });
+        } else {
+          DIFF_KEYS.forEach(k => {
+            if (fresh.bestTimes[k]) fresh.byDifficulty[k].bestTime = fresh.bestTimes[k];
+          });
+        }
+        return fresh;
+      }
+
+      let timerInterval = null;
+
+      function saveToStorage() {
+        try {
+          const payload = {
+            difficulty: state.difficulty,
+            givens: state.givens,
+            board: state.board,
+            solution: state.solution,
+            notes: state.notes,
+            mistakes: state.mistakes,
+            hintsLeft: state.hintsLeft,
+            seconds: state.seconds,
+            gameOver: state.gameOver,
+            settings: state.settings,
+            stats: state.stats
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        } catch (_) {}
+      }
+
+      function loadFromStorage() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return false;
+          const data = JSON.parse(raw);
+          if (data && data.settings) Object.assign(state.settings, data.settings);
+          if (data && data.stats) state.stats = normalizeStats(data.stats);
+
+          if (data && Array.isArray(data.board) && data.board.length === 81 && !data.gameOver) {
+            state.difficulty = data.difficulty || 'easy';
+            state.givens = data.givens;
+            state.board = data.board;
+            state.solution = data.solution;
+            state.notes = data.notes || new Array(81).fill(0);
+            state.mistakes = data.mistakes || 0;
+            state.hintsLeft = typeof data.hintsLeft === 'number' ? data.hintsLeft : 3;
+            state.seconds = data.seconds || 0;
+            state.gameOver = false;
+            return true;
+          }
+        } catch (_) {}
+        return false;
+      }
+
+      /* ========================================================================
+         4. DOM BUILDING & EVENT-DRIVEN MINIMAL RENDERING
+         ======================================================================== */
+      const gridEl = document.getElementById('sudoku-grid');
+      const numpadEl = document.getElementById('numpad');
+      const infoBanner = document.getElementById('info-banner');
+      const cellEls = [];
+      const numBtnEls = [];
+
+      function initDOMGrid() {
+        gridEl.innerHTML = '';
+        cellEls.length = 0;
+        for (let i = 0; i < 81; i++) {
+          const r = (i / 9) | 0;
+          const c = i % 9;
+          const cell = document.createElement('button');
+          cell.type = 'button';
+          cell.className = 'cell';
+          cell.dataset.idx = i;
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          cell.setAttribute('role', 'gridcell');
+          cell.setAttribute('aria-label', `Row ${r + 1} Column ${c + 1}`);
+          cell.addEventListener('click', () => onCellClick(i));
+          gridEl.appendChild(cell);
+          cellEls.push(cell);
+        }
+
+        numpadEl.innerHTML = '';
+        numBtnEls.length = 0;
+        for (let d = 1; d <= 9; d++) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'num-btn';
+          btn.dataset.digit = d;
+          btn.innerHTML = `<span class="num-val">${d}</span><span class="num-rem" id="rem-${d}">9</span>`;
+          btn.addEventListener('click', () => onDigitInput(d));
+          numpadEl.appendChild(btn);
+          numBtnEls.push(btn);
+        }
+      }
+
+      function setBanner(msg, tone) {
+        infoBanner.className = 'info-banner' + (tone ? ' ' + tone : '');
+        infoBanner.innerHTML = `<span>${msg}</span>`;
+      }
+
+      function applyThemeAndSettings() {
+        document.documentElement.setAttribute('data-theme', state.settings.theme);
+        document.documentElement.setAttribute('data-accent', state.settings.accent);
+        const metaTheme = document.getElementById('meta-theme-color');
+        if (metaTheme) {
+          metaTheme.setAttribute('content', state.settings.theme === 'dark' ? '#10131A' : '#F8F9FF');
+        }
+        try {
+          if (window.AndroidBridge && typeof window.AndroidBridge.setSystemBarTheme === 'function') {
+            window.AndroidBridge.setSystemBarTheme(state.settings.theme);
+          }
+        } catch (_) {}
+
+        // Sync settings switches
+        const syncSwitch = (id, val) => {
+          const el = document.getElementById(id);
+          if (el) el.classList.toggle('on', !!val);
+        };
+        syncSwitch('toggle-mistake-limit', state.settings.mistakeLimit);
+        syncSwitch('toggle-highlight-same', state.settings.highlightSame);
+        syncSwitch('toggle-highlight-peers', state.settings.highlightPeers);
+        syncSwitch('toggle-auto-prune', state.settings.autoPruneNotes);
+        syncSwitch('toggle-sound', state.settings.sound);
+
+        document.querySelectorAll('.accent-swatch').forEach(sw => {
+          sw.classList.toggle('active', sw.dataset.accentPick === state.settings.accent);
+        });
+      }
+
+      function hasConflict(idx, val) {
+        if (!val) return false;
+        const r = (idx / 9) | 0;
+        const c = idx % 9;
+        const bStartR = ((r / 3) | 0) * 3;
+        const bStartC = ((c / 3) | 0) * 3;
+
+        for (let i = 0; i < 9; i++) {
+          const rIdx = r * 9 + i;
+          const cIdx = i * 9 + c;
+          if (rIdx !== idx && state.board[rIdx] === val) return true;
+          if (cIdx !== idx && state.board[cIdx] === val) return true;
+        }
+        for (let dr = 0; dr < 3; dr++) {
+          for (let dc = 0; dc < 3; dc++) {
+            const bIdx = (bStartR + dr) * 9 + (bStartC + dc);
+            if (bIdx !== idx && state.board[bIdx] === val) return true;
+          }
+        }
+        return false;
+      }
+
+      function renderBoard(animatedIdx) {
+        const selIdx = state.selectedIdx;
+        const selR = selIdx >= 0 ? ((selIdx / 9) | 0) : -1;
+        const selC = selIdx >= 0 ? (selIdx % 9) : -1;
+        const selB = selIdx >= 0 ? boxIndex(selR, selC) : -1;
+        const activeDigit = state.fastMode && state.lockedDigit > 0
+          ? state.lockedDigit
+          : (selIdx >= 0 ? state.board[selIdx] : 0);
+
+        const digitCounts = new Int32Array(10);
+        let filledCount = 0;
+
+        for (let i = 0; i < 81; i++) {
+          const val = state.board[i];
+          if (val !== 0) {
+            digitCounts[val]++;
+            filledCount++;
+          }
+        }
+
+        for (let i = 0; i < 81; i++) {
+          const cell = cellEls[i];
+          const r = (i / 9) | 0;
+          const c = i % 9;
+          const b = boxIndex(r, c);
+          const val = state.board[i];
+          const isGiven = state.givens[i] !== 0;
+
+          let cls = 'cell';
+          if (i === selIdx) {
+            cls += ' selected';
+          } else if (state.settings.highlightSame && activeDigit !== 0 && val === activeDigit) {
+            cls += ' same-digit';
+          } else if (state.settings.highlightPeers && selIdx >= 0 && (r === selR || c === selC || b === selB)) {
+            cls += ' peer';
+          }
+
+          if (isGiven) {
+            cls += ' given';
+          } else if (val !== 0) {
+            cls += ' user-val';
+          }
+
+          if (val !== 0 && (!isGiven && val !== state.solution[i] || hasConflict(i, val))) {
+            cls += ' conflict';
+          }
+
+          if (i === state.hintHighlightIdx) {
+            cls += ' hint-target';
+          }
+
+          cell.className = cls;
+
+          if (val !== 0) {
+            const animClass = i === animatedIdx ? ' class="digit-pop"' : '';
+            cell.innerHTML = `<span${animClass}>${val}</span>`;
+          } else {
+            const mask = state.notes[i];
+            if (mask === 0) {
+              cell.innerHTML = '';
+            } else {
+              let notesHTML = '<div class="notes-grid">';
+              for (let d = 1; d <= 9; d++) {
+                const hasNote = (mask & (1 << (d - 1))) !== 0;
+                const hi = (state.settings.highlightSame && activeDigit === d && hasNote) ? ' highlight-note' : '';
+                notesHTML += `<span class="note-item${hi}">${hasNote ? d : ''}</span>`;
+              }
+              notesHTML += '</div>';
+              cell.innerHTML = notesHTML;
+            }
+          }
+        }
+
+        // Update status strip
+        const mistakesEl = document.getElementById('mistakes-display');
+        mistakesEl.textContent = state.settings.mistakeLimit
+          ? `${state.mistakes} / ${state.maxMistakes}`
+          : `${state.mistakes}`;
+
+        const pct = Math.floor((filledCount / 81) * 100);
+        document.getElementById('progress-display').textContent = `${pct}%`;
+
+        // Update toolbar states
+        document.getElementById('btn-notes').classList.toggle('active', state.notesMode);
+        document.getElementById('notes-badge').textContent = state.notesMode ? 'ON' : 'OFF';
+        document.getElementById('hint-badge').textContent = `${state.hintsLeft}`;
+
+        const fastBtn = document.getElementById('btn-fast-mode');
+        fastBtn.classList.toggle('md-btn-primary', state.fastMode);
+        fastBtn.classList.toggle('md-btn-tonal', !state.fastMode);
+        fastBtn.innerHTML = `<span>Input: ${state.fastMode ? 'Number-First' : 'Cell-First'}</span>`;
+
+        // Update number pad buttons & remaining counts
+        for (let d = 1; d <= 9; d++) {
+          const btn = numBtnEls[d - 1];
+          const rem = Math.max(0, 9 - digitCounts[d]);
+          const remEl = document.getElementById(`rem-${d}`);
+          if (remEl) remEl.textContent = rem === 0 ? '✓' : `${rem}`;
+          btn.classList.toggle('completed', rem === 0);
+          btn.classList.toggle('locked-digit', state.fastMode && state.lockedDigit === d);
+        }
+
+        // Disable Auto-Notes on Hard & Expert levels
+        const autoNotesBtn = document.getElementById('btn-auto-notes');
+        if (autoNotesBtn) {
+          const isAutoNotesDisabled = state.difficulty === 'hard' || state.difficulty === 'expert';
+          autoNotesBtn.disabled = isAutoNotesDisabled;
+          autoNotesBtn.title = isAutoNotesDisabled
+            ? 'Auto-Notes is disabled on Hard and Expert levels'
+            : 'Compute all valid pencil candidates for empty cells';
+        }
+
+        // Highlight active difficulty chip
+        document.querySelectorAll('.diff-chip').forEach(chip => {
+          chip.classList.toggle('active', chip.dataset.diff === state.difficulty);
+        });
+      }
+
+      /* ========================================================================
+         5. GAMEPLAY INTERACTIONS, UNDO/REDO, NOTES & LOGICAL HINTS
+         ======================================================================== */
+      function pushHistory() {
+        state.undoStack.push({
+          board: state.board.slice(),
+          notes: state.notes.slice(),
+          selectedIdx: state.selectedIdx
+        });
+        if (state.undoStack.length > 100) state.undoStack.shift();
+        state.redoStack.length = 0;
+      }
+
+      function prunePeerNotes(idx, digit) {
+        if (!state.settings.autoPruneNotes) return;
+        const bit = 1 << (digit - 1);
+        const r = (idx / 9) | 0;
+        const c = idx % 9;
+        const bStartR = ((r / 3) | 0) * 3;
+        const bStartC = ((c / 3) | 0) * 3;
+
+        for (let i = 0; i < 9; i++) {
+          state.notes[r * 9 + i] &= ~bit;
+          state.notes[i * 9 + c] &= ~bit;
+        }
+        for (let dr = 0; dr < 3; dr++) {
+          for (let dc = 0; dc < 3; dc++) {
+            state.notes[(bStartR + dr) * 9 + (bStartC + dc)] &= ~bit;
+          }
+        }
+      }
+
+      function checkWinCondition() {
+        for (let i = 0; i < 81; i++) {
+          if (state.board[i] !== state.solution[i]) return false;
+        }
+        return true;
+      }
+
+      function placeOrNoteInCell(idx, digit) {
+        if (state.paused || state.gameOver || idx < 0 || idx >= 81) return;
+        if (state.givens[idx] !== 0) {
+          setBanner('Given clue cells cannot be modified.', '');
+          soundTap();
+          return;
+        }
+
+        state.hintHighlightIdx = -1;
+
+        if (state.notesMode) {
+          if (state.board[idx] !== 0) {
+            setBanner('Erase the placed digit first to add pencil notes.', '');
+            return;
+          }
+          pushHistory();
+          const bit = 1 << (digit - 1);
+          state.notes[idx] ^= bit;
+          soundTap();
+          renderBoard(-1);
+          saveToStorage();
+          return;
+        }
+
+        // Standard digit placement
+        if (state.board[idx] === digit) {
+          // Tapping the same digit removes it
+          pushHistory();
+          state.board[idx] = 0;
+          soundTap();
+          renderBoard(-1);
+          saveToStorage();
+          return;
+        }
+
+        pushHistory();
+        state.board[idx] = digit;
+        state.notes[idx] = 0;
+
+        if (digit !== state.solution[idx]) {
+          state.mistakes++;
+          soundError();
+          if (state.settings.mistakeLimit && state.mistakes >= state.maxMistakes) {
+            renderBoard(idx);
+            endGame(false);
+            return;
+          }
+          setBanner(`Conflict: ${digit} does not belong in Row ${((idx / 9) | 0) + 1}, Col ${(idx % 9) + 1}.`, 'error');
+        } else {
+          soundPlace();
+          prunePeerNotes(idx, digit);
+          setBanner(`Placed ${digit} at Row ${((idx / 9) | 0) + 1}, Column ${(idx % 9) + 1}.`, '');
+        }
+
+        renderBoard(idx);
+        saveToStorage();
+
+        if (checkWinCondition()) {
+          endGame(true);
+        }
+      }
+
+      function onCellClick(idx) {
+        if (state.paused || state.gameOver) return;
+        state.selectedIdx = idx;
+        state.hintHighlightIdx = -1;
+
+        if (state.fastMode && state.lockedDigit > 0 && state.givens[idx] === 0) {
+          placeOrNoteInCell(idx, state.lockedDigit);
+        } else {
+          soundTap();
+          renderBoard(-1);
+        }
+      }
+
+      function onDigitInput(digit) {
+        if (state.paused || state.gameOver) return;
+        if (state.fastMode) {
+          state.lockedDigit = state.lockedDigit === digit ? 0 : digit;
+          soundTap();
+          setBanner(
+            state.lockedDigit
+              ? `Number ${digit} locked — tap any empty cell to ${state.notesMode ? 'note' : 'place'} ${digit}.`
+              : 'Number lock cleared.',
+            'highlight'
+          );
+          renderBoard(-1);
+          return;
+        }
+
+        if (state.selectedIdx < 0) {
+          setBanner('Select a cell on the grid first.', '');
+          return;
+        }
+        placeOrNoteInCell(state.selectedIdx, digit);
+      }
+
+      function onErase() {
+        if (state.paused || state.gameOver || state.selectedIdx < 0) return;
+        const idx = state.selectedIdx;
+        if (state.givens[idx] !== 0) {
+          setBanner('Cannot erase a starting clue.', '');
+          return;
+        }
+        if (state.board[idx] === 0 && state.notes[idx] === 0) return;
+
+        pushHistory();
+        state.board[idx] = 0;
+        state.notes[idx] = 0;
+        state.hintHighlightIdx = -1;
+        soundTap();
+        setBanner('Cell cleared.', '');
+        renderBoard(-1);
+        saveToStorage();
+      }
+
+      function onUndo() {
+        if (state.paused || state.gameOver || state.undoStack.length === 0) return;
+        state.redoStack.push({
+          board: state.board.slice(),
+          notes: state.notes.slice(),
+          selectedIdx: state.selectedIdx
+        });
+        const prev = state.undoStack.pop();
+        state.board = prev.board;
+        state.notes = prev.notes;
+        state.selectedIdx = prev.selectedIdx;
+        state.hintHighlightIdx = -1;
+        soundTap();
+        setBanner('Move undone.', '');
+        renderBoard(-1);
+        saveToStorage();
+      }
+
+      function onRedo() {
+        if (state.paused || state.gameOver || state.redoStack.length === 0) return;
+        state.undoStack.push({
+          board: state.board.slice(),
+          notes: state.notes.slice(),
+          selectedIdx: state.selectedIdx
+        });
+        const next = state.redoStack.pop();
+        state.board = next.board;
+        state.notes = next.notes;
+        state.selectedIdx = next.selectedIdx;
+        state.hintHighlightIdx = -1;
+        soundTap();
+        setBanner('Move redone.', '');
+        renderBoard(-1);
+        saveToStorage();
+      }
+
+      // Compute valid candidate mask for cell `idx` given current valid placements
+      function getValidCandidatesMask(idx) {
+        if (state.board[idx] !== 0) return 0;
+        const r = (idx / 9) | 0;
+        const c = idx % 9;
+        const bStartR = ((r / 3) | 0) * 3;
+        const bStartC = ((c / 3) | 0) * 3;
+        let used = 0;
+        for (let i = 0; i < 9; i++) {
+          const rv = state.board[r * 9 + i];
+          const cv = state.board[i * 9 + c];
+          if (rv && rv === state.solution[r * 9 + i]) used |= (1 << (rv - 1));
+          if (cv && cv === state.solution[i * 9 + c]) used |= (1 << (cv - 1));
+        }
+        for (let dr = 0; dr < 3; dr++) {
+          for (let dc = 0; dc < 3; dc++) {
+            const bv = state.board[(bStartR + dr) * 9 + (bStartC + dc)];
+            if (bv && bv === state.solution[(bStartR + dr) * 9 + (bStartC + dc)]) {
+              used |= (1 << (bv - 1));
+            }
+          }
+        }
+        return ALL_MASK & ~used;
+      }
+
+      function onAutoNotes() {
+        if (state.paused || state.gameOver) return;
+        if (state.difficulty === 'hard' || state.difficulty === 'expert') {
+          setBanner('Auto-Notes is disabled in Hard and Expert levels.', 'error');
+          return;
+        }
+        pushHistory();
+        for (let i = 0; i < 81; i++) {
+          if (state.board[i] === 0) {
+            state.notes[i] = getValidCandidatesMask(i);
+          } else {
+            state.notes[i] = 0;
+          }
+        }
+        soundPlace();
+        setBanner('All valid candidate pencil notes populated.', 'highlight');
+        renderBoard(-1);
+        saveToStorage();
+      }
+
+      // Smart Hint: finds a Naked Single or Hidden Single with human explanation
+      function onSmartHint() {
+        if (state.paused || state.gameOver) return;
+        if (state.hintsLeft <= 0) {
+          setBanner('No hints remaining for this puzzle.', 'error');
+          soundError();
+          return;
+        }
+
+        // 1. Check if user has an incorrect digit on board
+        for (let i = 0; i < 81; i++) {
+          if (state.board[i] !== 0 && state.board[i] !== state.solution[i]) {
+            state.hintsLeft--;
+            pushHistory();
+            state.selectedIdx = i;
+            state.hintHighlightIdx = i;
+            state.board[i] = state.solution[i];
+            prunePeerNotes(i, state.solution[i]);
+            soundPlace();
+            setBanner(`Hint: Corrected error at Row ${((i / 9) | 0) + 1}, Col ${(i % 9) + 1} → ${state.solution[i]}.`, 'highlight');
+            renderBoard(i);
+            saveToStorage();
+            if (checkWinCondition()) endGame(true);
+            return;
+          }
+        }
+
+        // 2. Search for a Naked Single (cell with only 1 valid candidate)
+        for (let i = 0; i < 81; i++) {
+          if (state.board[i] === 0) {
+            const mask = getValidCandidatesMask(i);
+            if (popcount9(mask) === 1) {
+              const digit = state.solution[i];
+              state.hintsLeft--;
+              pushHistory();
+              state.selectedIdx = i;
+              state.hintHighlightIdx = i;
+              state.board[i] = digit;
+              state.notes[i] = 0;
+              prunePeerNotes(i, digit);
+              soundPlace();
+              setBanner(`Naked Single: Row ${((i / 9) | 0) + 1}, Col ${(i % 9) + 1} can only be ${digit}.`, 'highlight');
+              renderBoard(i);
+              saveToStorage();
+              if (checkWinCondition()) endGame(true);
+              return;
+            }
+          }
+        }
+
+        // 3. Fallback: Reveal selected empty cell or first empty cell
+        let target = (state.selectedIdx >= 0 && state.board[state.selectedIdx] === 0)
+          ? state.selectedIdx
+          : state.board.findIndex(v => v === 0);
+
+        if (target !== -1) {
+          const digit = state.solution[target];
+          state.hintsLeft--;
+          pushHistory();
+          state.selectedIdx = target;
+          state.hintHighlightIdx = target;
+          state.board[target] = digit;
+          state.notes[target] = 0;
+          prunePeerNotes(target, digit);
+          soundPlace();
+          setBanner(`Logical Hint: Placed ${digit} in Row ${((target / 9) | 0) + 1}, Col ${(target % 9) + 1}.`, 'highlight');
+          renderBoard(target);
+          saveToStorage();
+          if (checkWinCondition()) endGame(true);
+        }
+      }
+
+      /* ========================================================================
+         6. TIMER, PAUSE, NEW GAME & ENDGAME FLOWS
+         ======================================================================== */
+      function formatSeconds(sec) {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }
+
+      function updateTimerUI() {
+        document.getElementById('timer-display').textContent = formatSeconds(state.seconds);
+      }
+
+      function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+          if (!state.paused && !state.gameOver && !document.hidden) {
+            state.seconds++;
+            updateTimerUI();
+            if (state.seconds % 10 === 0) saveToStorage();
+          }
+        }, 1000);
+      }
+
+      function togglePause(forcePause) {
+        if (state.gameOver) return;
+        state.paused = typeof forcePause === 'boolean' ? forcePause : !state.paused;
+        document.getElementById('pause-overlay').classList.toggle('active', state.paused);
+        const iconPause = document.getElementById('icon-pause');
+        if (iconPause) {
+          iconPause.innerHTML = state.paused
+            ? '<path d="M8 5v14l11-7z"/>'
+            : '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        }
+      }
+
+      function startNewGame(difficulty) {
+        const diff = difficulty || state.difficulty || 'easy';
+        state.difficulty = diff;
+
+        const generated = generatePuzzle(diff);
+        state.givens = generated.puzzle.slice();
+        state.board = generated.puzzle.slice();
+        state.solution = generated.solution.slice();
+        state.notes = new Array(81).fill(0);
+        state.selectedIdx = state.board.findIndex(v => v === 0);
+        if (state.selectedIdx === -1) state.selectedIdx = 0;
+
+        state.mistakes = 0;
+        state.hintsLeft = 3;
+        state.hintHighlightIdx = -1;
+        state.seconds = 0;
+        state.paused = false;
+        state.gameOver = false;
+        state.undoStack.length = 0;
+        state.redoStack.length = 0;
+
+        state.stats.played++;
+        if (state.stats.byDifficulty[diff]) {
+          state.stats.byDifficulty[diff].played++;
+        }
+        togglePause(false);
+        updateTimerUI();
+        startTimer();
+
+        const diffLabel = diff.charAt(0).toUpperCase() + diff.slice(1);
+        setBanner(`New ${diffLabel} puzzle ready — guaranteed unique solution.`, '');
+        renderBoard(-1);
+        saveToStorage();
+      }
+
+      function endGame(won) {
+        state.gameOver = true;
+        if (timerInterval) clearInterval(timerInterval);
+
+        const badge = document.getElementById('endgame-badge');
+        const title = document.getElementById('title-endgame');
+        const sub = document.getElementById('endgame-subtitle');
+
+        const dStat = state.stats.byDifficulty[state.difficulty];
+        if (won) {
+          soundWin();
+          state.stats.won++;
+          state.stats.streak++;
+          const curBest = state.stats.bestTimes[state.difficulty];
+          if (!curBest || state.seconds < curBest) {
+            state.stats.bestTimes[state.difficulty] = state.seconds;
+          }
+          if (dStat) {
+            dStat.won++;
+            dStat.streak++;
+            dStat.totalTime += state.seconds;
+            if (!dStat.bestTime || state.seconds < dStat.bestTime) {
+              dStat.bestTime = state.seconds;
+            }
+          }
+          badge.textContent = '★';
+          title.textContent = 'Puzzle Solved!';
+          sub.textContent = `Completed ${state.difficulty.toUpperCase()} difficulty with ${state.mistakes} mistake${state.mistakes === 1 ? '' : 's'}.`;
+        } else {
+          soundError();
+          state.stats.streak = 0;
+          if (dStat) dStat.streak = 0;
+          badge.textContent = '×';
+          title.textContent = 'Out of Strikes';
+          sub.textContent = 'You reached 3 mistakes. Start a fresh board or disable the strike limit in Settings.';
+        }
+
+        document.getElementById('end-time').textContent = formatSeconds(state.seconds);
+        document.getElementById('end-diff').textContent = state.difficulty.charAt(0).toUpperCase() + state.difficulty.slice(1);
+        saveToStorage();
+        openModal('modal-endgame');
+      }
+
+      /* ========================================================================
+         7. MODALS & KEYBOARD / EVENT LISTENERS
+         ======================================================================== */
+      function renderStatsModal() {
+        const filter = state.statsFilter || 'all';
+        document.querySelectorAll('.stats-filter-chip').forEach(chip => {
+          chip.classList.toggle('active', chip.dataset.statDiff === filter);
+        });
+
+        let played = state.stats.played;
+        let won = state.stats.won;
+        let streak = state.stats.streak;
+        let bestTime = null;
+
+        if (filter === 'all') {
+          DIFF_KEYS.forEach(k => {
+            const bt = state.stats.byDifficulty[k].bestTime || state.stats.bestTimes[k];
+            if (bt && (!bestTime || bt < bestTime)) bestTime = bt;
+          });
+          document.getElementById('lbl-stat-best').textContent = 'Fastest Overall';
+        } else {
+          const ds = state.stats.byDifficulty[filter];
+          played = ds ? ds.played : 0;
+          won = ds ? ds.won : 0;
+          streak = ds ? ds.streak : 0;
+          bestTime = ds ? (ds.bestTime || state.stats.bestTimes[filter]) : null;
+          const labelName = filter.charAt(0).toUpperCase() + filter.slice(1);
+          document.getElementById('lbl-stat-best').textContent = `Best Time (${labelName})`;
+        }
+
+        document.getElementById('stat-played').textContent = `${played}`;
+        document.getElementById('stat-won').textContent = `${won}`;
+        document.getElementById('stat-streak').textContent = `${streak}`;
+        document.getElementById('stat-best-time').textContent = bestTime ? formatSeconds(bestTime) : '--:--';
+
+        const tbody = document.getElementById('stats-diff-tbody');
+        if (tbody) {
+          tbody.innerHTML = DIFF_KEYS.map(k => {
+            const ds = state.stats.byDifficulty[k];
+            const p = ds.played || 0;
+            const w = ds.won || 0;
+            const winPct = p > 0 ? `${Math.round((w / p) * 100)}%` : '0%';
+            const bt = ds.bestTime || state.stats.bestTimes[k];
+            const bestStr = bt ? formatSeconds(bt) : '--:--';
+            const avgStr = (w > 0 && ds.totalTime > 0) ? formatSeconds(Math.round(ds.totalTime / w)) : '--:--';
+            const isHighlighted = (filter === 'all' && k === state.difficulty) || (filter === k);
+            const rowCls = isHighlighted ? ' class="active-diff-row"' : '';
+            const name = k.charAt(0).toUpperCase() + k.slice(1);
+            return `<tr${rowCls} data-row-diff="${k}">
+              <td>${name}</td>
+              <td>${p}</td>
+              <td>${w}</td>
+              <td>${winPct}</td>
+              <td>${bestStr}</td>
+              <td>${avgStr}</td>
+            </tr>`;
+          }).join('');
+        }
+      }
+
+      function openModal(id) {
+        if (id === 'modal-stats') {
+          renderStatsModal();
+        }
+        const el = document.getElementById(id);
+        if (el) el.classList.add('open');
+      }
+
+      function closeModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('open');
+      }
+
+      function bindEvents() {
+        // Top bar buttons
+        document.getElementById('btn-new-game').addEventListener('click', () => startNewGame(state.difficulty));
+        document.getElementById('btn-stats').addEventListener('click', () => openModal('modal-stats'));
+        document.getElementById('btn-settings').addEventListener('click', () => openModal('modal-settings'));
+        document.getElementById('btn-theme').addEventListener('click', () => {
+          state.settings.theme = state.settings.theme === 'light' ? 'dark' : 'light';
+          applyThemeAndSettings();
+          saveToStorage();
+        });
+
+        // Difficulty tabs
+        document.querySelectorAll('.diff-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            const diff = chip.dataset.diff;
+            startNewGame(diff);
+          });
+        });
+
+        // Pause / Resume
+        document.getElementById('btn-pause').addEventListener('click', () => togglePause());
+        document.getElementById('btn-resume').addEventListener('click', () => togglePause(false));
+
+        // Toolbar buttons
+        document.getElementById('btn-undo').addEventListener('click', onUndo);
+        document.getElementById('btn-redo').addEventListener('click', onRedo);
+        document.getElementById('btn-erase').addEventListener('click', onErase);
+        document.getElementById('btn-notes').addEventListener('click', () => {
+          state.notesMode = !state.notesMode;
+          soundTap();
+          setBanner(state.notesMode ? 'Pencil Notes mode ON — entries add candidates.' : 'Pencil Notes mode OFF.', '');
+          renderBoard(-1);
+        });
+        document.getElementById('btn-hint').addEventListener('click', onSmartHint);
+
+        // Secondary buttons
+        document.getElementById('btn-fast-mode').addEventListener('click', () => {
+          state.fastMode = !state.fastMode;
+          if (state.fastMode && !state.lockedDigit) state.lockedDigit = 1;
+          if (!state.fastMode) state.lockedDigit = 0;
+          soundTap();
+          setBanner(
+            state.fastMode
+              ? `Number-First mode ON (Digit ${state.lockedDigit} selected). Tap cells to place rapidly.`
+              : 'Cell-First mode ON.',
+            'highlight'
+          );
+          renderBoard(-1);
+        });
+
+        document.getElementById('btn-auto-notes').addEventListener('click', onAutoNotes);
+
+        // Modal close buttons
+        document.querySelectorAll('[data-close]').forEach(btn => {
+          btn.addEventListener('click', () => closeModal(btn.dataset.close));
+        });
+        document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+          backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) backdrop.classList.remove('open');
+          });
+        });
+
+        // Settings switches (auto-saved immediately on every toggle click)
+        let autosaveTimer = null;
+        const notifySettingsSaved = () => {
+          saveToStorage();
+          const pill = document.getElementById('settings-autosave-status');
+          if (pill) {
+            pill.textContent = '✓ Auto-saved';
+            if (autosaveTimer) clearTimeout(autosaveTimer);
+            autosaveTimer = setTimeout(() => {
+              pill.textContent = 'Changes auto-save instantly';
+            }, 1400);
+          }
+        };
+
+        const bindToggle = (id, key) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.addEventListener('click', () => {
+            state.settings[key] = !state.settings[key];
+            applyThemeAndSettings();
+            renderBoard(-1);
+            notifySettingsSaved();
+            soundTap();
+          });
+        };
+        bindToggle('toggle-mistake-limit', 'mistakeLimit');
+        bindToggle('toggle-highlight-same', 'highlightSame');
+        bindToggle('toggle-highlight-peers', 'highlightPeers');
+        bindToggle('toggle-auto-prune', 'autoPruneNotes');
+        bindToggle('toggle-sound', 'sound');
+
+        document.querySelectorAll('.accent-swatch').forEach(sw => {
+          sw.addEventListener('click', () => {
+            state.settings.accent = sw.dataset.accentPick;
+            applyThemeAndSettings();
+            renderBoard(-1);
+            notifySettingsSaved();
+            soundTap();
+          });
+        });
+
+        document.querySelectorAll('.stats-filter-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            state.statsFilter = chip.dataset.statDiff || 'all';
+            soundTap();
+            renderStatsModal();
+          });
+        });
+
+        document.getElementById('btn-reset-stats').addEventListener('click', () => {
+          state.stats = createFreshStats();
+          soundTap();
+          saveToStorage();
+          renderStatsModal();
+        });
+
+        document.getElementById('btn-end-close').addEventListener('click', () => closeModal('modal-endgame'));
+        document.getElementById('btn-end-new').addEventListener('click', () => {
+          closeModal('modal-endgame');
+          startNewGame(state.difficulty);
+        });
+
+        // Keyboard navigation & shortcuts
+        window.addEventListener('keydown', (e) => {
+          if (document.querySelector('.modal-backdrop.open')) {
+            if (e.key === 'Escape') {
+              document.querySelectorAll('.modal-backdrop.open').forEach(m => m.classList.remove('open'));
+            }
+            return;
+          }
+
+          if (e.key === 'p' || e.key === 'P') {
+            e.preventDefault();
+            togglePause();
+            return;
+          }
+          if (state.paused || state.gameOver) return;
+
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+            e.preventDefault();
+            if (e.shiftKey) onRedo(); else onUndo();
+            return;
+          }
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+            e.preventDefault();
+            onRedo();
+            return;
+          }
+
+          if (e.key >= '1' && e.key <= '9') {
+            e.preventDefault();
+            onDigitInput(parseInt(e.key, 10));
+            return;
+          }
+
+          if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') {
+            e.preventDefault();
+            onErase();
+            return;
+          }
+
+          if (e.key === 'n' || e.key === 'N' || e.key === ' ') {
+            e.preventDefault();
+            state.notesMode = !state.notesMode;
+            renderBoard(-1);
+            return;
+          }
+
+          if (e.key === 'h' || e.key === 'H') {
+            e.preventDefault();
+            onSmartHint();
+            return;
+          }
+
+          // Arrow / WASD navigation
+          let r = ((state.selectedIdx / 9) | 0);
+          let c = state.selectedIdx % 9;
+          if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') { r = (r + 8) % 9; e.preventDefault(); }
+          else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') { r = (r + 1) % 9; e.preventDefault(); }
+          else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') { c = (c + 8) % 9; e.preventDefault(); }
+          else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { c = (c + 1) % 9; e.preventDefault(); }
+          else return;
+
+          state.selectedIdx = r * 9 + c;
+          renderBoard(-1);
+        });
+
+        // Auto-pause timer on background tab / Android WebView onPause
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden && !state.gameOver) {
+            saveToStorage();
+          }
+        });
+      }
+
+      // Initialize App on Load
+      window.addEventListener('DOMContentLoaded', () => {
+        initDOMGrid();
+        const restored = loadFromStorage();
+        applyThemeAndSettings();
+        bindEvents();
+        if (restored) {
+          updateTimerUI();
+          startTimer();
+          setBanner(`Resumed saved ${state.difficulty.toUpperCase()} puzzle.`, '');
+          renderBoard(-1);
+        } else {
+          startNewGame('easy');
+        }
+      });
+    })();
+  </script>
+  <script>
+    // Android uses bundled file:// assets; only secure browser origins install a PWA worker.
+    if ('serviceWorker' in navigator &&
+        (location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname))) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((error) => {
+          console.warn('Offline installation unavailable:', error);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
